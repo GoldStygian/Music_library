@@ -116,8 +116,30 @@ def artist_page(request, artist_slug):
     dataArtist = query.getArtist(artist_slug)
 
     songArtist = query.getTracksArtist(artist_slug)
+    songArtist = [
+    {
+        'id': row[0],
+        'titolo': row[1],
+        'autore': row[2],
+        'artistParticipants': row[3],
+        'album_id': row[4],
+        'durata': row[5],
+        'fileName': row[6]
+    }
+    for row in songArtist
+    ]
+
+    # album proprietari
+    # album in cui compare
+
+    #soluzione efficiente
+    # - get artist
+    # - get albums 
+    # - get track associati
+    # al posto di 4 get
+
     
-    context={"datiArtista": dataArtist, "songArtist": songArtist}
+    context={"dataArtist": dataArtist, "songArtist": songArtist}
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return render(request, 'artista.html', context)

@@ -121,7 +121,16 @@ def getArtists():
         query = "SELECT * FROM artista"
         with connection.cursor() as cursor:
             cursor.execute(query)
-            return cursor.fetchall()
+            result = cursor.fetchall()
+        
+        result = {
+            'id': result[0],
+            'country': result[1],
+            'name': result[2],
+            'extra': result[3]
+        }
+
+        return result
 
     except Exception as error:
         raise error
@@ -132,7 +141,7 @@ def getArtist(id: str):
         query = "SELECT * FROM artista WHERE id = %s"
         with connection.cursor() as cursor:
             cursor.execute(query, (id, ))
-            return cursor.fetchall()
+            return cursor.fetchone()
 
     except Exception as error:
         raise error
@@ -167,11 +176,29 @@ def getTracksArtist(idArtist: str):
             WHERE album_id IN \
             ( \
 	            SELECT album_id FROM artista_album\
+	            WHERE artista_id = %s AND proprietario = true\
+            )"
+        
+        with connection.cursor() as cursor:
+            cursor.execute(query, (idArtist, ))
+            return cursor.fetchall()
+
+    except Exception as error:
+        raise error
+    
+def getAllTracksArtist(idArtist: str):
+
+    try:
+        query = "\
+            SELECT * FROM traccia  \
+            WHERE album_id IN \
+            ( \
+	            SELECT album_id FROM artista_album\
 	            WHERE artista_id = %s\
             )"
         
         with connection.cursor() as cursor:
-            cursor.execute(query, (idArtist))
+            cursor.execute(query, (idArtist, ))
             return cursor.fetchall()
 
     except Exception as error:
