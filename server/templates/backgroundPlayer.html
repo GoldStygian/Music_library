@@ -1,0 +1,302 @@
+<p> player </p>
+
+<!-- Questo elemento audio non cambia tra le pagine -->
+<!-- backgroundPlayer.html -->
+<audio id="background-audio-player" controls>
+    <source id="audio-source" src="" type="audio/mpeg"> <!-- quando clicco chiamo changeTrack che gli passa l'src-->
+    Il tuo browser non supporta l'elemento audio.
+</audio>
+
+
+<style>
+
+/* #content{
+    margin-bottom: 100px;
+} */
+
+.song-control-menu {
+    display: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed; /* Fissa il menu in una posizione */
+    bottom: 0; /* Posizionalo in basso */
+    left: 0; /* Allineamento a sinistra */
+    width: 100%; /* Larghezza completa */
+    background-color: rgb(87, 87, 87); /* Colore di sfondo */
+    border-top: 1px solid #ff0000; /* Una linea per separarlo dalla pagina */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Aggiungi un'ombra */
+    padding: 10px; /* Spaziatura interna */
+    text-align: center; /* Allinea il contenuto al centro */
+    z-index: 1000; /* Assicurati che stia sopra gli altri elementi */
+
+    border: 0px solid;
+    border-radius: 15px;
+}
+</style>
+
+<div class="song-control-menu">
+    <button id="play-pause-btn">Pause</button>
+    <span id="time">00:00</span>
+    <input id="progress-bar" type="range" value="0" max="100" step="1">
+    <button id="next-btn">Next</button>
+    <button id="prev-btn">Previous</button>
+</div>
+
+<!-- <script>
+
+    const audioPlayer2 = document.getElementById('background-audio-player');
+    const playPauseButton = document.getElementById('play-pause-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const timeDisplay = document.getElementById('time');
+
+    // Funzione per aggiornare la barra di avanzamento
+    audioPlayer2.addEventListener('timeupdate', () => {
+        const progress = (audioPlayer2.currentTime / audioPlayer2.duration) * 100;
+        progressBar.value = progress;
+
+        // Mostra il tempo corrente nel formato mm:ss
+        const currentTime = formatTime(audioPlayer2.currentTime);
+        timeDisplay.textContent = currentTime;
+    });
+
+    // Funzione per cercare il tempo nel formato mm:ss
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return `${minutes.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    // Funzione per riprodurre o mettere in pausa
+    playPauseButton.addEventListener('click', () => {
+        if (audioPlayer.paused) {
+            audioPlayer.play();
+            playPauseButton.textContent = 'Pause'; // Modifica il testo del bottone in "Pause"
+        } else {
+            audioPlayer.pause();
+            playPauseButton.textContent = 'Play'; // Modifica il testo del bottone in "Play"
+        }
+    });
+</script>
+
+<script>
+    const audioPlayer = document.getElementById('background-audio-player');
+
+    //mediaSession
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = null; // Metadati inizialmente vuoti
+    }
+
+    // Aggiorna i metadati della traccia corrente
+    function updateMediaSessionMetadata(title, artist, albumArtUrl) {
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: title,
+                artist: artist,
+                album: '', // Puoi aggiungere il nome dell'album se disponibile
+                artwork: [
+                    { src: albumArtUrl, sizes: '96x96', type: 'image/png' },
+                    { src: albumArtUrl, sizes: '128x128', type: 'image/png' },
+                    { src: albumArtUrl, sizes: '192x192', type: 'image/png' },
+                    { src: albumArtUrl, sizes: '256x256', type: 'image/png' },
+                ]
+            });
+
+            console.log('Media Session metadata updated:', navigator.mediaSession.metadata);
+        }
+    }
+
+    // MediaSession Action Handlers
+        if ('mediaSession' in navigator) {
+        navigator.mediaSession.setActionHandler('play', () => {
+            audioPlayer.play();
+        });
+        navigator.mediaSession.setActionHandler('pause', () => {
+            audioPlayer.pause();
+        });
+        navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+            audioPlayer.currentTime = Math.max(audioPlayer.currentTime - (details.seekOffset || 10), 0);
+        });
+        navigator.mediaSession.setActionHandler('seekforward', (details) => {
+            audioPlayer.currentTime = Math.min(audioPlayer.currentTime + (details.seekOffset || 10), audioPlayer.duration);
+        });
+    }
+    //mediaSession
+
+    // Mostra i controlli
+    var showed = false;
+    function showControl(title, artist, albumArtUrl){
+        if (!showed){
+            menu = document.getElementsByClassName("song-control-menu")[0]; // Ottieni il primo elemento con la classe;
+            menu.style.display = "flex";
+            menu.style.flexDirection = "row";
+            menu.style.alignItems = "center"; // Allinea gli elementi verticalmente
+        }
+    }
+    // Mostra i controlli
+
+
+    function loadAudio(url) {
+        audioPlayer.src = url;
+        audioPlayer.play();
+    }
+
+    // Quando una traccia viene cliccata
+    function changeTrack(url, title, artist, albumArtUrl) {
+        const audioSource = document.getElementById('audio-source');
+        
+        // Imposta la nuova traccia
+        audioSource.src = url;
+        audioPlayer.load(); // Ricarica il player con la nuova traccia
+        audioPlayer.play(); // Avvia la riproduzione
+
+        // Memorizza le informazioni
+        // localStorage.setItem('savedTrackUrl', url); // Memorizza l'URL della traccia
+        // localStorage.setItem('isPlaying', 'true'); // Memorizza l'URL della traccia
+
+        // Aggiorna i metadati della MediaSession
+        updateMediaSessionMetadata(title, artist, albumArtUrl);
+
+        // Mostra i controlli
+        showControl(title, artist, albumArtUrl);
+
+    }
+
+    audioPlayer.addEventListener('pause', function() {
+        // Quando l'audio viene messo in pausa, salva l'informazione
+        localStorage.setItem('isPlaying', 'false');
+        console.log('Audio in pausa!');
+        console.log('Audio in riproduzione, isPlaying:', localStorage.getItem('isPlaying'));
+    });
+
+    audioPlayer.addEventListener('play', function() {
+        // Quando l'audio viene riprodotto, annulla la pausa
+        localStorage.setItem('isPlaying', 'true');
+        console.log('Audio in riproduzione!');
+        console.log('Audio in riproduzione, isPlaying:', localStorage.getItem('isPlaying'));
+    });
+
+    // Carica la traccia salvata all'avvio
+    // window.addEventListener('load', function() {
+    //     const savedTrackUrl = localStorage.getItem('savedTrackUrl');
+    //     const isPlaying = localStorage.getItem('isPlaying') === 'true';
+    //     console.log(savedTrackUrl, " - ", isPlaying);
+    //     if (savedTrackUrl) {
+    //         changeTrack(savedTrackUrl); // Riprendi la traccia salvata
+
+    //         // Riprendi la riproduzione solo se `isPlaying` è `true`
+    //         if (isPlaying) {
+    //             audioPlayer.play();
+    //         } else {
+    //             audioPlayer.pause();
+    //         }
+    //     }
+    // });
+
+</script> -->
+<script>
+    const Player = {
+    audioElement: document.getElementById('background-audio-player'),
+
+    // Metodi per il controllo del player
+    loadTrack(url) {
+        this.audioElement.src = url;
+        this.audioElement.load();
+    },
+    play() {
+        this.audioElement.play();
+    },
+    pause() {
+        this.audioElement.pause();
+    },
+    setMetadata(title, artist, albumArtUrl) {
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: title,
+                artist: artist,
+                artwork: [
+                    { src: albumArtUrl, sizes: '96x96', type: 'image/png' },
+                    { src: albumArtUrl, sizes: '256x256', type: 'image/png' }
+                ]
+            });
+        }
+    },
+
+    // Eventi del player
+    on(eventName, callback) {
+        this.audioElement.addEventListener(eventName, callback);
+    }
+};
+</script>
+
+<script>
+    const PlayerUI = {
+    playPauseButton: document.getElementById('play-pause-btn'),
+    progressBar: document.getElementById('progress-bar'),
+    timeDisplay: document.getElementById('time'),
+
+    // Inizializza gli eventi della GUI
+    init(player) {
+        // Aggiorna la barra di avanzamento
+        player.on('timeupdate', () => {
+            const progress = (player.audioElement.currentTime / player.audioElement.duration) * 100;
+            this.progressBar.value = progress;
+
+            const currentTime = this.formatTime(player.audioElement.currentTime);
+            this.timeDisplay.textContent = currentTime;
+        });
+
+        // Assegna eventi ai pulsanti
+        this.playPauseButton.addEventListener('click', () => {
+            if (player.audioElement.paused) {
+                player.play();
+                this.playPauseButton.textContent = 'Pause';
+            } else {
+                player.pause();
+                this.playPauseButton.textContent = 'Play';
+            }
+        });
+
+        // Aggiungi l'evento per aggiornare il tempo della traccia con la barra di avanzamento
+            this.progressBar.addEventListener('input', (event) => {
+            const progress = event.target.value; // Valore della barra (percentuale)
+            const newTime = (progress / 100) * player.audioElement.duration; // Calcola il tempo corrispondente
+            player.audioElement.currentTime = newTime; // Aggiorna il tempo corrente
+        });
+    },
+
+    // Formatta il tempo in mm:ss
+    formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return `${minutes.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+    }
+};
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Inizializza la GUI
+        PlayerUI.init(Player);
+
+        // Mostra i controlli
+        var showed = false;
+        function showControl(){
+            if (!showed){
+                menu = document.getElementsByClassName("song-control-menu")[0]; // Ottieni il primo elemento con la classe;
+                menu.style.display = "flex";
+
+                dinamicContent = document.getElementById("content");
+                dinamicContent.style.marginBottom = "50px";
+            }
+        }
+        // Mostra i controlli
+
+        window.changeTrack = (url, title, artist, albumArtUrl) => {
+            showControl();
+            Player.loadTrack(url);
+            Player.setMetadata(title, artist, albumArtUrl);
+            Player.play();
+        };
+    });
+</script>

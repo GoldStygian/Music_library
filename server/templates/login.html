@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+
+<body>
+    <form class="site-form2" action="{% url 'login' %}" method="POST"><!--action si riferisce se la reg non è buona-->
+        {% csrf_token %}
+        <div class="card">
+            <ul class="card-body">
+                <p><strong class="titolo">Login</strong></p>
+                <p>{{form.username.label}}</p>
+                <div class="user-box">
+                    <div>
+                        <img class="img-user" src="{% static 'icone/email.ico' %}">
+                    </div>
+                    <div>
+                        {{form.username}}
+                    </div>
+                </div>
+                <p>{{form.password.label}}</p>
+                <p>{{form.password}}</p>
+                <p></li><input class="btnlogin" type="submit" value="Login"></p>
+
+            </ul>
+
+            {% if form.errors %}
+            <ul>
+                {% for field in form %}
+                    {% if field.errors %}
+                        <li>{{ field.label }}: {{ field.errors|striptags }}</li>
+                    {% endif %}
+                {% endfor %}
+            
+                {% if form.non_field_errors %}
+                    <li>{{ form.non_field_errors|striptags }}</li>
+                {% endif %}
+            </ul>
+            {% endif %}
+            
+        </div>
+    </form>
+</body>

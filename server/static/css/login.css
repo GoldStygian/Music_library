@@ -1,0 +1,103 @@
+body{
+    background: linear-gradient(45deg, rgba(185, 46, 141, 0.8), rgba(26, 32, 189, 0.8));
+    height: 100vh;
+    overflow: scroll;
+}
+
+.site-form2{
+    text-align: center;
+    justify-content: center;
+    justify-items: center;
+
+    margin-top: 5%;
+    margin-left: 35%;
+    margin-right: 35%;
+
+    border: 2px solid black;
+    outline: #0016ff1c solid 4px;
+    border-radius: 15px;
+}
+
+.card{
+    background: transparent;
+    width: auto;
+    padding: 10px;
+}
+
+.titolo{
+    width: 100%;
+}
+
+.user-box{
+    border: 2px solid #000000ad;
+    border-radius: 15px;
+    box-shadow: 4px 6px 7px #434343;
+    background:transparent;
+    width: 100%;
+    clear:both;
+    display: grid;
+    grid-template-columns: 27px auto;
+}
+.img-user{
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-right: 22px;
+    margin-left: 5px;
+    height: 22px;
+    width: 22px;
+}
+.user-input{
+    border: none;
+    outline: none;
+    background:transparent;
+    justify-content: center;
+    width: 100%;
+}
+
+
+
+.password-input{
+    border: 2px solid #000000ad;
+    border-radius: 15px;
+    box-shadow: 4px 6px 7px #434343;
+    background:transparent;
+    width: 100%
+}
+
+p{
+    margin-top: 10px;
+}
+
+.btnlogin {
+    display: block;
+    background: #202020;
+    border-radius: 115px;
+    border: none;
+    color: #fff;
+    margin-top: 10px;
+    margin-left: 15px;
+    margin: auto;
+    padding: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    font-size: 15px;
+    width: 100px;
+}
+.btnlogin:hover{
+    box-shadow: 3px 3px gray;
+}
+
+@media screen and (max-width: 769px){
+.site-form2{
+    margin-left: 25%;
+    margin-right: 25%;
+ }
+}
+
+@media screen and (max-width: 769px){
+.site-form2{
+    margin-left: 20%;
+    margin-right: 20%;
+ }
+}

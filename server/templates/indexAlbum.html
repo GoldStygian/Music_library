@@ -1,0 +1,27 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/grid.css' %}">
+
+<p>album</p>
+
+<div class="item-grid">
+    {% for id, nome, data in albums %}
+        <div class="item-container">
+            <a href="#">
+                <img src="/media/album/{{ id }}.jpg" alt="{{ nome }}" class="item-img">
+            </a>
+            <p class="item-name">{{ nome }}</p>
+        </div>
+    {% empty %}
+        <p>Nessun album trovato.</p>
+    {% endfor %}
+</div>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <label>Inserisci una canzone</label>
+    <input type="file" name="songFile" accept=".mp3, .flac">
+
+    <button type="submit">Carica</button>
+</form>

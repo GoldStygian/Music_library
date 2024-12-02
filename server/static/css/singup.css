@@ -1,0 +1,169 @@
+body{
+    background: linear-gradient(45deg, red, blue);
+    /*height: 100vh;*/
+    overflow: scroll;
+}
+
+.site-form{
+    text-align: center;
+    justify-content: center;
+    justify-items: center;
+
+    margin-top: 5%;
+    margin-left: 35%;
+    margin-right: 35%;
+
+    border: 2px solid black;
+    outline: #0016ff1c solid 4px;
+    border-radius: 15px;
+
+}
+
+.card{
+    background: transparent;
+    width: auto;
+    padding: 10px;
+}
+
+.titolo{
+    width: 100%;
+}
+
+
+
+.user-box{
+    border: 2px solid #000000ad;
+    border-radius: 15px;
+    box-shadow: 4px 6px 7px #434343;
+    background:transparent;
+    width: 100%;
+    clear:both;
+    display: grid;
+    grid-template-columns: 27px auto;
+}
+.img-user{
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-right: 22px;
+    margin-left: 5px;
+    height: 22px;
+    width: 22px;
+}
+.user-input{
+    border: none;
+    outline: none;
+    background:transparent;
+    justify-content: center;
+    width: 100%;
+}
+
+
+.email-box{
+    border: 2px solid #000000ad;
+    border-radius: 15px;
+    box-shadow: 4px 6px 7px #434343;
+    background:transparent;
+    width: 100%;
+    clear:both;
+    display: grid;
+    grid-template-columns: 27px auto;
+}
+.img-email{
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-right: 22px;
+    margin-left: 5px;
+    height: 20px;
+    width: 20px;
+}
+.email-input{
+    border: none;
+    outline: none;
+    background:transparent;
+    justify-content: center;
+    width: 100%;
+}
+
+.password1-input{
+    border: 2px solid #000000ad;
+    border-radius: 15px;
+    border-radius: 15px;
+    box-shadow: 4px 6px 7px #434343;
+    background:transparent;
+    width: 100%;
+    margin: auto;
+    justify-content: center;
+}
+
+.password2-input{
+    border: 2px solid #000000ad;
+    border-radius: 15px;
+    border-radius: 15px;
+    box-shadow: 4px 6px 7px #434343;
+    background:transparent;
+    width: 100%;
+    margin: auto;
+    justify-content: center;
+}
+
+p{
+    margin-top: 10px;
+}
+
+.field-input{
+        border: 2px solid #000000ad;
+    border-radius: 15px;
+    border-radius: 15px;
+    box-shadow: 4px 6px 7px #434343;
+    background:transparent;
+    width: 100%;
+    margin: auto;
+    justify-content: center;
+}
+
+.btn {
+    display: block;
+    background: #202020;
+    color: #fff;
+    margin-top: 10px;
+    margin-left: 15px;
+    margin: auto;
+    padding: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    width: 100px;
+    text-align: center;
+    border-radius: 115px;
+    font-size: 15px;
+}
+
+.alert{
+
+    margin-left: 35%;
+    margin-right: 35%;
+    background: transparent;
+    border: none;
+    color: black;
+}
+
+@media screen and (max-width: 769px){
+    .site-form{
+        margin-left: 25%;
+        margin-right: 25%;
+    }
+    .alert{
+        margin-left: 25%;
+        margin-right: 25%;
+    }
+}
+    
+    @media screen and (max-width: 769px){
+    .site-form{
+        margin-left: 20%;
+        margin-right: 20%;
+    }
+    .alert{
+        margin-left: 20%;
+        margin-right: 20%;
+    }
+}

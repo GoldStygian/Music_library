@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>myServer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="{% static 'js/ajaxNavigation.js' %}"></script>
+</head>
+
+<style>
+
+    /* a < 305 px si scompone la navbar */
+
+    body {
+        font-family: "Lato", sans-serif;
+        transition: background-color .5s;
+        background-color: rgb(33, 33, 33);
+    }
+
+    .sidenav {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #111;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+        }
+
+        .sidenav p {
+        padding: 8px 8px 8px 16px; /* top | right | bottom | left */
+        text-decoration: none;
+        font-size: 25px;
+        color: white;
+        display: block;
+        transition: 0.3s;
+        }
+
+        .sidenav a {
+        padding: 8px 8px 8px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+        }
+
+        .sidenav a:hover {
+        color: #f1f1f1;
+        }
+
+        .sidenav .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+        }
+
+    @media screen and (max-height: 450px) {
+        .sidenav {padding-top: 15px;}
+        .sidenav a {font-size: 18px;}
+    }
+
+    @media screen and (max-width: 463px){
+        .dropdown {display: none;}
+    }
+
+    .navbar {
+        display: flex;
+        overflow: hidden;
+        background-color: rgb(87, 87, 87);
+
+        border: 0px solid;
+        border-radius: 15px;
+
+        justify-content: center; /* Centra i link orizzontalmente */
+        align-items: center; /* Centra i link verticalmente */
+
+        }
+      
+        .navbar a {
+            float: left;
+            font-size: 16px;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+        
+        .dropdown {
+            float: left;
+            overflow: hidden;
+        }
+        
+        .dropdown .dropbtn {
+            font-size: 16px;  
+            border: none;
+            outline: none;
+            color: white;
+            padding: 14px 16px;
+            background-color: inherit;
+            font-family: inherit;
+            margin: 0;
+        }
+        
+        .navbar a:hover, .dropdown:hover .dropbtn {
+            border-top: 2px solid red;
+            border-bottom: 2px solid red;
+            border-radius: 10px;
+            background-color: red;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        
+        .dropdown-content a {
+            float: none;
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+        
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+    
+</style>
+
+<body>
+
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+
+        
+        <p>Navigazione</p> <!-- Link di navigazione per cambiare pagina tramite AJAX -->
+        <a href="{% url 'index' 'playlist' %}" onclick="closeNav()" class="ajax-link">Playlist</a>
+        <a href="{% url 'index' 'artisti' %}" onclick="closeNav()" class="ajax-link">Artisti</a>
+        <a href="{% url 'index' 'album' %}" onclick="closeNav()" class="ajax-link">Album</a>
+        <a href="{% url 'index' 'brani' %}" onclick="closeNav()" class="ajax-link">Brani</a>
+        
+        <p>Funzioni</p>
+        <a href="">Upload</a>
+
+    </div>
+
+    <div class="navbar">
+
+        <div style="font-size:30px;cursor:pointer;" onclick="openNav()">&#9776;</div>
+
+        <!-- Link di navigazione per cambiare pagina tramite AJAX -->
+        <a href="{% url 'index' 'playlist' %}" class="ajax-link">Playlist</a>
+        <a href="{% url 'index' 'artisti' %}" class="ajax-link">Artisti</a>
+        <a href="{% url 'index' 'album' %}" class="ajax-link">Album</a>
+        <a href="{% url 'index' 'brani' %}" class="ajax-link">Brani</a>
+        
+        <div class="dropdown">
+          <button class="dropbtn">Dropdown
+            <i class="fa fa-caret-down"></i>
+          </button>
+          <div class="dropdown-content">
+            <a href="#">Link 1</a>
+            <a href="#">Link 2</a>
+            <a href="#">Link 3</a>
+          </div>
+        </div>
+      </div>
+
+    {% include 'backgroundPlayer.html' %}
+
+    <div id="content"> <!-- contenuto dinamico ajax-->
+
+        {% block content %}
+        {% endblock content %}
+
+    </div>
+
+</body>
+
+<script>
+    function openNav() {
+      document.getElementById("mySidenav").style.width = "250px";
+      //document.getElementById("main").style.marginLeft = "250px";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)"; // modifico il colore dello sfondo quando clicco
+    }
+    
+    function closeNav() {
+      document.getElementById("mySidenav").style.width = "0";
+      //document.getElementById("main").style.marginLeft= "0";
+      document.body.style.backgroundColor = "rgb(33, 33, 33)"; // modifico il colore dello sfondo quando clicco
+    }
+</script>
+
+
+</html>

@@ -1,0 +1,4 @@
+psycopg2
+musicbrainzngs
+requests
+mutagen

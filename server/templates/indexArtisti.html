@@ -1,0 +1,18 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/grid.css' %}">
+
+<p>artista</p>
+
+<div class="item-grid">
+    {% for id, country, nome, descrizione in artists %}
+        <div class="item-container">
+            <a class="ajax-link" href="{% url 'artist-page' id %}">
+                <img src="/media/{{nome}}/cover.jpg" alt="{{ nome }}" class="item-img">
+            </a>
+            <p class="item-name">{{ nome }}</p>
+        </div>
+    {% empty %}
+        <p>Nessun album trovato.</p>
+    {% endfor %}
+</div>
