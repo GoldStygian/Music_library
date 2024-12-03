@@ -121,16 +121,7 @@ def getArtists():
         query = "SELECT * FROM artista"
         with connection.cursor() as cursor:
             cursor.execute(query)
-            result = cursor.fetchall()
-        
-        result = {
-            'id': result[0],
-            'country': result[1],
-            'name': result[2],
-            'extra': result[3]
-        }
-
-        return result
+            return cursor.fetchall()
 
     except Exception as error:
         raise error
@@ -141,7 +132,16 @@ def getArtist(id: str):
         query = "SELECT * FROM artista WHERE id = %s"
         with connection.cursor() as cursor:
             cursor.execute(query, (id, ))
-            return cursor.fetchone()
+            result = cursor.fetchone()
+        
+        result = {
+            'id': result[0],
+            'country': result[1],
+            'name': result[2],
+            'extra': result[3]
+        }
+
+        return result
 
     except Exception as error:
         raise error
@@ -181,7 +181,22 @@ def getTracksArtist(idArtist: str):
         
         with connection.cursor() as cursor:
             cursor.execute(query, (idArtist, ))
-            return cursor.fetchall()
+            result =  cursor.fetchall()
+        
+        result = [
+        {
+            'id': row[0],
+            'titolo': row[1],
+            'autore': row[2],
+            'artistParticipants': row[3],
+            'album_id': row[4],
+            'durata': row[5],
+            'fileName': row[6]
+        }
+        for row in result
+        ]
+
+        return result
 
     except Exception as error:
         raise error

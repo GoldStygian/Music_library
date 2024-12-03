@@ -116,18 +116,6 @@ def artist_page(request, artist_slug):
     dataArtist = query.getArtist(artist_slug)
 
     songArtist = query.getTracksArtist(artist_slug)
-    songArtist = [
-    {
-        'id': row[0],
-        'titolo': row[1],
-        'autore': row[2],
-        'artistParticipants': row[3],
-        'album_id': row[4],
-        'durata': row[5],
-        'fileName': row[6]
-    }
-    for row in songArtist
-    ]
 
     # album proprietari
     # album in cui compare
@@ -137,6 +125,33 @@ def artist_page(request, artist_slug):
     # - get albums 
     # - get track associati
     # al posto di 4 get
+
+    # SELECT 
+    #     AA.album_id AS album_id,
+    #     A.nome AS album_nome,
+    #     A.data AS data_pubblicazione,
+    #     STRING_AGG(AA.artista_id::text || '-' || Ar.artist_name, ',') AS artista,  -- Concatenazione id e nome dell'artista
+    #     AA.proprietario AS proprietario,
+    #     T.id,
+    #     T.titolo,
+    #     T.autore,
+    #     T.artisti_partecipanti
+    # FROM 
+    #     album AS A
+    # JOIN 
+    #     artista_album AS AA ON A.id = AA.album_id
+    # JOIN 
+    #     traccia AS T ON A.id = T.album_id
+    # JOIN 
+    #     artista AS Ar ON AA.artista_id = Ar.id  -- Join con la tabella degli artisti per ottenere il nome
+    # WHERE 
+    #     A.id IN (
+    #         SELECT album_id
+    #         FROM artista_album
+    #         WHERE artista_id = '2f548675-008d-4332-876c-108b0c7ab9c5'
+    #     )
+    # GROUP BY 
+    #     AA.album_id, A.nome, A.data, AA.proprietario, T.id, T.titolo, T.autore, T.artisti_partecipanti
 
     
     context={"dataArtist": dataArtist, "songArtist": songArtist}
