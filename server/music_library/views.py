@@ -109,6 +109,7 @@ def index(request, slug):
     #         template_name = 'indexBrani.html' if is_ajax else 'index.html'
     #         return render(request, template_name, data)
 
+from django.db import connection
 def artist_page(request, artist_slug):
 
     print("sluuuuuuuug ", artist_slug)
@@ -117,44 +118,54 @@ def artist_page(request, artist_slug):
 
     songArtist = query.getTracksArtist(artist_slug)
 
-    # album proprietari
-    # album in cui compare
+    result = query.getAllData(artist_slug)
 
-    #soluzione efficiente
-    # - get artist
-    # - get albums 
-    # - get track associati
-    # al posto di 4 get
+    print(type(result[0][4]))
 
-    # SELECT 
-    #     AA.album_id AS album_id,
-    #     A.nome AS album_nome,
-    #     A.data AS data_pubblicazione,
-    #     STRING_AGG(AA.artista_id::text || '-' || Ar.artist_name, ',') AS artista,  -- Concatenazione id e nome dell'artista
-    #     AA.proprietario AS proprietario,
-    #     T.id,
-    #     T.titolo,
-    #     T.autore,
-    #     T.artisti_partecipanti
-    # FROM 
-    #     album AS A
-    # JOIN 
-    #     artista_album AS AA ON A.id = AA.album_id
-    # JOIN 
-    #     traccia AS T ON A.id = T.album_id
-    # JOIN 
-    #     artista AS Ar ON AA.artista_id = Ar.id  -- Join con la tabella degli artisti per ottenere il nome
-    # WHERE 
-    #     A.id IN (
-    #         SELECT album_id
-    #         FROM artista_album
-    #         WHERE artista_id = '2f548675-008d-4332-876c-108b0c7ab9c5'
-    #     )
-    # GROUP BY 
-    #     AA.album_id, A.nome, A.data, AA.proprietario, T.id, T.titolo, T.autore, T.artisti_partecipanti
+    structured_data = {"albumProprietari": {}, "albumNonProprietari": {}}
 
-    
-    context={"dataArtist": dataArtist, "songArtist": songArtist}
+    for entry in result:
+        album_id = entry[0]
+        traccia_id = entry[5]
+        
+        album_entry = {
+            "album_nome": entry[1],
+            "data_pubblicazione": entry[2],
+            "artisti": [
+                {"artista_id": artist.split(',')[0], "artist_name": artist.split(',')[1]}
+                for artist in entry[3].split(';')
+            ],
+            "tracce": {}
+        }
+
+        traccia_entry = {
+            "id": traccia_id,
+            "titolo": entry[6],
+            "autore": entry[7],
+            "artisti_partecipanti": entry[8],
+            "durata": entry[9],
+            "file_name": entry[10],
+        }
+
+        # Verifica se l'album è proprietario o meno
+        if entry[4]:  # Proprietario
+            if album_id not in structured_data["albumProprietari"]:
+                structured_data["albumProprietari"][album_id] = album_entry
+
+            # Aggiungi la traccia
+            structured_data["albumProprietari"][album_id]["tracce"][traccia_id] = traccia_entry
+        else:  # Non Proprietario
+            if album_id not in structured_data["albumNonProprietari"]:
+                structured_data["albumNonProprietari"][album_id] = album_entry
+
+            # Aggiungi la traccia
+            structured_data["albumNonProprietari"][album_id]["tracce"][traccia_id] = traccia_entry
+
+    # Stampa il risultato
+    import pprint
+    pprint.pprint(structured_data)
+
+    context={"dataArtist": dataArtist, "data":structured_data}
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return render(request, 'artista.html', context)

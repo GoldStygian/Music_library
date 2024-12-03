@@ -219,60 +219,47 @@ def getAllTracksArtist(idArtist: str):
     except Exception as error:
         raise error
 
-# def fetchall_nameActress():
-#     query="SELECT name FROM gallery_actress"
+def getAllData(idArtist: str):
 
-#     with connection.cursor() as cursor:
-#         cursor.execute(query)
-#         result = cursor.fetchall() #tuple di attributi del select ((name, ), ...)
+    try:
+        query = """
+            SELECT 
+                AA.album_id AS album_id,
+                A.nome AS album_nome,
+                A.data AS data_pubblicazione,
+                STRING_AGG(AA.artista_id::text || ',' || Ar.artist_name, ';') AS artista,
+                AA.proprietario AS proprietario,
+                T.id,
+                T.titolo,
+                T.autore,
+                T.artisti_partecipanti,
+                T.durata,
+                T.file_name
+            FROM 
+                album AS A
+            JOIN 
+                artista_album AS AA ON A.id = AA.album_id
+            JOIN 
+                traccia AS T ON A.id = T.album_id
+            JOIN 
+                artista AS Ar ON AA.artista_id = Ar.id
+            WHERE 
+                AA.artista_id = %s
+            GROUP BY 
+                AA.album_id, A.nome, A.data, AA.proprietario, T.id, T.titolo, T.autore, T.artisti_partecipanti, T.durata, T.file_name
+        """
 
-#     result = [r[0] for r in result]
-#     return result
+                #         A.id IN (
+                #     SELECT album_id
+                #     FROM artista_album
+                #     WHERE artista_id = %s
+                # )
 
-# def fetchall_tag():
-#     query="SELECT name FROM gallery_tag"
+        with connection.cursor() as cursor:
+            cursor.execute(query, (idArtist, ))
+            result = cursor.fetchall()
 
-#     with connection.cursor() as cursor:
-#         cursor.execute(query)
-#         result = cursor.fetchall() #tuple di attributi del select ((name, ), ...)
+            return result
 
-#     result = [r[0] for r in result]
-#     return result
-
-# def fetch_video_duration(file):
-#     query="SELECT duration FROM gallery_video WHERE name = %s"
-
-#     with connection.cursor() as cursor:
-#         cursor.execute(query, (file, ))
-#         result = cursor.fetchall()
-
-#     result = [r[0] for r in result]
-#     return result
-    
-
-# def check_actress(name):
-#     query = "SELECT name FROM gallery_actress WHERE name=%s"
-#     with connection.cursor() as cursor:
-#         cursor.execute(query, (name, ))
-#         result = cursor.fetchone()
-
-#         if result:
-#             return True
-#         else:
-#             return False
-
-# def insert_gallery_video(video, source, duration):
-#     query="INSERT INTO gallery_video VALUES (%s, %s, %s)"
-#     with connection.cursor() as cursor:
-#         cursor.execute(query, (video, source,duration, ))
-
-# def insert_actressVideo(video, actress):
-#     query = "INSERT INTO gallery_video_actress (video_id, actress_id) VALUES (%s, %s)"
-#     with connection.cursor() as cursor:
-#         cursor.execute(query, (video, actress, ))
-
-# def insert_newActress(name, thumb):
-
-#     query = "INSERT INTO gallery_actress VALUES (%s, %s)"
-#     with connection.cursor() as cursor:
-#         cursor.execute(query, (name, thumb, ))
+    except Exception as error:
+        raise error
