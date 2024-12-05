@@ -161,6 +161,7 @@ def logIn(request):
             #messages.success(request, "Logged successfully as %s"%(user))
             login(request, user)
             return redirect('index-slugless')
+
     else:
         form = LoginUserForm()
 

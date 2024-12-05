@@ -52,7 +52,7 @@ def registerArtist(id, country, artist_name, descrizione):
     try:
         query = "INSERT INTO artista VALUES (%s, %s, %s, %s)"
         with connection.cursor() as cursor:
-            cursor.execute(query, (id, country, artist_name, None, ))
+            cursor.execute(query, (id, country, artist_name, descrizione, ))
     except Exception as error:
         raise error
 
