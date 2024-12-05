@@ -1,0 +1,10 @@
+<p>upload</p>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <label>Inserisci una canzone</label>
+    <input type="file" name="songFile" accept=".mp3, .flac">
+
+    <button type="submit">Carica</button>
+</form>

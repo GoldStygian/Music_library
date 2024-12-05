@@ -1,16 +1,25 @@
 aggiungere il rollback com "with transiction"
 implementare pagina upload
+funzione di ricerca
 implementare playlist
+monitor di sistema
 implementare control menu of song{
     SI SOVRAPPONE AGLI ELEMENTI DELLA pagina
     non si deve sovrapporre alla sidenav
 }
 implementare pagina canzone in riproduzione in dettaglio
 implementare una client cash per le immagini
-implementare la funzioanlita di ridurre la qualità della musica scaricata
+implementare la funzionalità di ridurre la qualità della musica per connessioni lente o a scelta
+implementazione scaricare musica direttamente{
+  - ricerca online
+  -- api per scaricare
+  -- mostrare i metadati e possibile modificca
+  -- applicare i metadati
+  - file upload
+}
 
-
-
+PROBLEMA:
+siccome gestisce solo richeste ajax, fare che la slugless sia un altra pagina html 
 
 
 FATTI:

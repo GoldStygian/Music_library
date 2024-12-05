@@ -146,6 +146,10 @@
             display: block;
         }
     
+    #content{
+        margin-top: 10px;
+    }
+    
 </style>
 
 <body>
@@ -161,7 +165,7 @@
         <a href="{% url 'index' 'brani' %}" onclick="closeNav()" class="ajax-link">Brani</a>
         
         <p>Funzioni</p>
-        <a href="">Upload</a>
+        <a href="{% url 'upload' %}" class="ajax-link">Upload</a>
 
     </div>
 
@@ -176,13 +180,11 @@
         <a href="{% url 'index' 'brani' %}" class="ajax-link">Brani</a>
         
         <div class="dropdown">
-          <button class="dropbtn">Dropdown
+          <button class="dropbtn">Menu
             <i class="fa fa-caret-down"></i>
           </button>
           <div class="dropdown-content">
-            <a href="#">Link 1</a>
-            <a href="#">Link 2</a>
-            <a href="#">Link 3</a>
+            <a href="{% url 'upload' %}" class="ajax-link">Upload</a>
           </div>
         </div>
       </div>

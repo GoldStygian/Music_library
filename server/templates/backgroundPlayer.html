@@ -6,6 +6,8 @@
     Il tuo browser non supporta l'elemento audio.
 </audio>
 
+<!-- <canvas id="spectrum"></canvas> -->
+
 <!-- <style>
 .song-control-menu {
     display: none; /* Usa flexbox per l'allineamento */
@@ -115,7 +117,6 @@
 
 
 <style>
-
 .song-control-menu {
     display: none;
     grid-template-columns: auto auto;
@@ -125,13 +126,23 @@
     bottom: 0;
     left: 1%;
     right: 1%;
-    width: 98%;
-    background-color: rgb(56, 56, 56); /* Colore di sfondo scuro */
+    /*width: 98%; */
+    /* background-color: rgb(56, 56, 56); /* Colore di sfondo scuro */
     border-top: 1px solid #ff0000;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2); /* Ombra più marcata */
     padding: 10px;
     z-index: 1000;
     border-radius: 15px;
+
+    background: linear-gradient(45deg, rgb(56, 56, 56), #1d1d1d, #500606);
+    background-size: 300% 300%;
+    animation: gradientAnimation 10s ease infinite;
+}
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .song-cover-container {
@@ -213,7 +224,9 @@
     </div>
     <input id="progress-bar" type="range" value="0" max="100" step="1">
 </div>
+<!-- <canvas id="spectrum"></canvas> -->
 
+<!-- classe Player -->
 <script>
     const Player = {
     audioElement: document.getElementById('background-audio-player'),
@@ -249,6 +262,7 @@
 };
 </script>
 
+<!-- classe PlayerUI -->
 <script>
     const PlayerUI = {
     playPauseButton: document.getElementById('play-pause-btn'),
@@ -265,6 +279,8 @@
 
             const currentTime = this.formatTime(player.audioElement.currentTime);
             this.timeDisplay.textContent = currentTime;
+
+            updateCanvasBackground();
         });
 
         // Assegna eventi ai pulsanti
@@ -297,6 +313,7 @@
 };
 </script>
 
+<!-- Gestione dell'evento di riproduzione -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         // Inizializza la GUI
@@ -309,8 +326,8 @@
                 menu = document.getElementsByClassName("song-control-menu")[0]; // Ottieni il primo elemento con la classe;
                 menu.style.display = "grid";
 
-                dinamicContent = document.getElementById("content");
-                dinamicContent.style.marginBottom = "50px";
+                dinamicContent = document.getElementById("content"); // contenuto dinamico di ajax
+                dinamicContent.style.marginBottom = "100px"; // dimensione control-bar 89
             }
         }
         // Mostra i controlli
@@ -326,6 +343,90 @@
 
             songTitle = document.getElementsByClassName("song-title")[0];
             songTitle.textContent = title;
+
         };
     });
 </script>
+
+<!-- <script>
+
+function updateCanvasBackground() {
+    // Ottieni il canvas
+    const canvas = document.getElementById('spectrum');
+    const ctx = canvas.getContext('2d');
+
+    // Imposta dimensioni del canvas
+    canvas.width = window.innerWidth;;
+    canvas.height = 89;
+
+    // Disegna qualcosa sul canvas (esempio di spettro audio simulato)
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Simula uno spettro dinamico
+    for (let i = 0; i < canvas.width; i += 10) {
+        const barHeight = Math.random() * canvas.height;
+        ctx.fillStyle = `rgb(${barHeight + 50}, 0, 100)`;
+        ctx.fillRect(i, canvas.height - barHeight, 8, barHeight);
+    }
+
+    // Ottieni immagine dal canvas
+    const canvasData = canvas.toDataURL();
+
+    // Applica il canvas come sfondo dinamico
+    const songControlMenu = document.querySelector('.song-control-menu');
+    songControlMenu.style.backgroundImage = `url(${canvasData})`;
+    songControlMenu.style.backgroundSize = 'cover';
+    songControlMenu.style.backgroundRepeat = 'no-repeat';
+}
+
+const audio = document.getElementById('background-audio-player');
+const canvas = document.getElementById('spectrum');
+const ctx = canvas.getContext('2d');
+
+// Resize canvas to fit window
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Set up Audio Context
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const analyser = audioContext.createAnalyser();
+analyser.fftSize = 256; // Determines the resolution of the spectrum
+
+const source = audioContext.createMediaElementSource(audio);
+source.connect(analyser);
+analyser.connect(audioContext.destination);
+
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+
+function draw() {
+    requestAnimationFrame(draw);
+
+    analyser.getByteFrequencyData(dataArray);
+
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const barWidth = canvas.width / bufferLength;
+    let barHeight;
+    let x = 0;
+
+    for (let i = 0; i < bufferLength; i++) {
+        barHeight = dataArray[i];
+        const r = barHeight + 25 * (i / bufferLength);
+        const g = 50 * (i / bufferLength);
+        const b = 255;
+
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+
+        x += barWidth + 1;
+    }
+}
+
+// Start the visualizer when the audio starts playing
+audio.addEventListener('play', () => {
+    audioContext.resume().then(draw);
+});
+</script> -->
