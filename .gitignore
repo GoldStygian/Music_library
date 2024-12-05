@@ -5,6 +5,7 @@
 
 /server/media
 /server/app.log
+/server/credentials.json
 
 *__pycache__
 *.pyc

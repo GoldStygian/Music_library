@@ -1,1 +1,1 @@
-print("[+] avvio server ...")
+print("[+] avvio server")

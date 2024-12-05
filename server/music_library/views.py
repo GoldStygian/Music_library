@@ -149,7 +149,6 @@ def upload(request):
     
     return render(request, "upload.html")
 
-@csrf_exempt
 def logIn(request):
     
     if request.method=='POST':

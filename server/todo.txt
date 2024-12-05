@@ -17,6 +17,7 @@ implementazione scaricare musica direttamente{
   -- applicare i metadati
   - file upload
 }
+usere lastfm apiu per la descrizione
 
 PROBLEMA:
 siccome gestisce solo richeste ajax, fare che la slugless sia un altra pagina html 

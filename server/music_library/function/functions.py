@@ -122,7 +122,7 @@ def getJsonMetadata(filePath):
 
 def downloadArtistImg(artistID, artistName):
 
-    image_url = get_artist_image_from_deezer(artistName) or get_artist_image_from_lastfm(artistID)
+    image_url = get_artist_image_from_deezer(artistName) or get_artist_image_from_lastfm(artistID, settings.LAST_FM_API_KEY)
     if image_url:
         download_image(image_url, os.path.join(settings.MEDIA_ROOT, f"{artistName}/cover.jpg"))
 

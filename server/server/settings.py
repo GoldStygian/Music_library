@@ -12,6 +12,19 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import json
+
+data={}
+print("[ ] lettura credenziali")
+try:
+    with open('credentials.json', 'r') as file:
+        data = json.load(file)
+    
+    print(data)
+except FileNotFoundError:
+    print("File non trovato!")
+except json.JSONDecodeError:
+    print("Errore nel parsing del JSON!")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +36,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Percorso della directory 'media
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p0^vndkv0u+@2275lm*6tfk=k%r06!o+ct6ts019l22d0ip8fw'
+SECRET_KEY = data["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -134,3 +147,7 @@ STATICFILES_DIRS = [     # Cartelle dove Django cerca i file statici
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# API keys
+
+LAST_FM_API_KEY = data["LAST_FM_API_KEY"]
