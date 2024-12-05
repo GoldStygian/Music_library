@@ -9,7 +9,7 @@ from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
 from mutagen.flac import FLAC
 from mutagen.mp4 import MP4  # per file M4A
-# import re
+import traceback
 import requests
 import shutil
 import logging
@@ -125,6 +125,11 @@ def downloadArtistImg(artistID, artistName):
     image_url = get_artist_image_from_deezer(artistName) or get_artist_image_from_lastfm(artistID, settings.LAST_FM_API_KEY)
     if image_url:
         download_image(image_url, os.path.join(settings.MEDIA_ROOT, f"{artistName}/cover.jpg"))
+    else:
+        raise NoImgFound
+    
+def downloadAlbumImg(albumID):
+    pass
 
 
 def extractArtist(artistsRow):
@@ -158,6 +163,9 @@ class CustomError(Exception):
 class TrackJustRegistred(CustomError):
     pass
 
+class NoImgFound(CustomError):
+    pass
+
 def uploadSongOnDB(filePath, fileName):
 
     logger.info(f"Caricando {fileName}")
@@ -173,12 +181,14 @@ def uploadSongOnDB(filePath, fileName):
 
             idTrack = mutagenIstance.getIDtrack()
             # logger.debug("ID traccia: ", idTrack)
+            print("id: ", idTrack)
 
             if isTrackRegistred(idTrack):
                 raise TrackJustRegistred
 
             idAlbum = mutagenIstance.getIDalbum()
             # logger.debug("ID album: ", idAlbum)
+            print("album: ", idAlbum)
 
             OnlineTrackMetadata = getMetadataByrecordingID(idTrack)
             logger.debug(f"Metadati traccia estratti trmite API: {json.dumps(OnlineTrackMetadata, indent=4, sort_keys=True)}")
@@ -218,9 +228,9 @@ def uploadSongOnDB(filePath, fileName):
                 logger.info(f"Album {OnlineAlbumMetadata["title"]}:{idAlbum} non registrato")
 
                 registerAlbum(idAlbum, OnlineAlbumMetadata["title"], OnlineAlbumMetadata["date"])
-                debug = getCoverAlbumByAlbumID(idAlbum)
-               
-                download_image(debug["images"][0]["image"], settings.MEDIA_ROOT+rf"/Album/{OnlineAlbumMetadata["id"]}.jpg")
+                data = getCoverAlbumByAlbumID(idAlbum) #null con billie elish
+                
+                download_image(data["images"][0]["image"], settings.MEDIA_ROOT+rf"/Album/{OnlineAlbumMetadata["id"]}.jpg")
             else:
                 logger.info(f"Album {OnlineAlbumMetadata["title"]}:{idAlbum} gia registrato")
 
@@ -253,6 +263,7 @@ def uploadSongOnDB(filePath, fileName):
     except Exception as error:
         # rollback del DB (gestito da django)
         # rollback file
+        logger.error(traceback.format_exc())
         raise error
 
 

@@ -19,6 +19,11 @@ implementazione scaricare musica direttamente{
 }
 usere lastfm apiu per la descrizione
 
+PROBELMA:
+upload di canzone senza nulla
+Soluzione
+ACUSTIC ID
+
 PROBLEMA:
 siccome gestisce solo richeste ajax, fare che la slugless sia un altra pagina html 
 
