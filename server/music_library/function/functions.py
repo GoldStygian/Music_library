@@ -14,10 +14,11 @@ import requests
 import shutil
 import logging
 
-from .deezerAPI import *
-from .lastFmAPI import *
-from .musicBrainzAPI import *
+from . import deezerAPI
+from . import lastFmAPI
+from . import musicBrainzAPI as mdAPI
 from .query import *
+from .error import *
 
 logger = logging.getLogger(__name__)
 
@@ -120,16 +121,22 @@ def getJsonMetadata(filePath):
     return metadata
 
 
-def downloadArtistImg(artistID, artistName):
+def download_artist_img(artistID, artistName):
 
-    image_url = get_artist_image_from_deezer(artistName) or get_artist_image_from_lastfm(artistID, settings.LAST_FM_API_KEY)
+    image_url = deezerAPI.get_artist_image_from_deezer(artistName) or lastFmAPI.get_artist_image_from_lastfm(artistID, settings.LAST_FM_API_KEY)
     if image_url:
         download_image(image_url, os.path.join(settings.MEDIA_ROOT, f"{artistName}/cover.jpg"))
     else:
-        raise NoImgFound
+        raise NoArtistImgFound
     
-def downloadAlbumImg(albumID):
-    pass
+def download_album_img(albumID):
+    
+    data = mdAPI.getCoverAlbumByAlbumID(albumID) #null con billie elish
+    if data:
+        download_image(data["images"][0]["image"], settings.MEDIA_ROOT+rf"/Album/{albumID}.jpg")
+    else:
+        raise NoAlbumImgFound
+
 
 
 def extractArtist(artistsRow):
@@ -157,14 +164,6 @@ def extractArtist(artistsRow):
 
     return [found_artists, found_artists]
 
-class CustomError(Exception):
-    pass
-
-class TrackJustRegistred(CustomError):
-    pass
-
-class NoImgFound(CustomError):
-    pass
 
 def uploadSongOnDB(filePath, fileName):
 
@@ -190,7 +189,7 @@ def uploadSongOnDB(filePath, fileName):
             # logger.debug("ID album: ", idAlbum)
             print("album: ", idAlbum)
 
-            OnlineTrackMetadata = getMetadataByrecordingID(idTrack)
+            OnlineTrackMetadata = mdAPI.getMetadataByrecordingID(idTrack)
             logger.debug(f"Metadati traccia estratti trmite API: {json.dumps(OnlineTrackMetadata, indent=4, sort_keys=True)}")
 
             firtArtist = None
@@ -209,18 +208,18 @@ def uploadSongOnDB(filePath, fileName):
                 if not isArtistRegistred(artistID):
                     logger.info(f"Artista {data["name"]}:{artistID} non registrato")
                     
-                    dataArtist = getMetadataByArtistID(artistID)
+                    dataArtist = mdAPI.getMetadataByArtistID(artistID)
                     
                     registerArtist(artistID, dataArtist["area"]["name"], dataArtist["name"], "to do")
 
                     os.mkdir(os.path.join(settings.MEDIA_ROOT, dataArtist["name"])) #se esiste
-                    downloadArtistImg(artistID, dataArtist["name"])
+                    download_artist_img(artistID, dataArtist["name"])
                 else:
                     logger.info(f"Artista {data["name"]}:{artistID} gia registrato")
 
             # album
             # - artista ID 
-            OnlineAlbumMetadata = getMetadataByAlbumID(idAlbum)
+            OnlineAlbumMetadata = mdAPI.getMetadataByAlbumID(idAlbum)
             logger.debug(f"Metadati album estratti trmite API: {json.dumps(OnlineAlbumMetadata, indent=4, sort_keys=True)}")
 
             # registro l'album
@@ -228,9 +227,10 @@ def uploadSongOnDB(filePath, fileName):
                 logger.info(f"Album {OnlineAlbumMetadata["title"]}:{idAlbum} non registrato")
 
                 registerAlbum(idAlbum, OnlineAlbumMetadata["title"], OnlineAlbumMetadata["date"])
-                data = getCoverAlbumByAlbumID(idAlbum) #null con billie elish
-                
-                download_image(data["images"][0]["image"], settings.MEDIA_ROOT+rf"/Album/{OnlineAlbumMetadata["id"]}.jpg")
+                try:
+                    download_album_img(idAlbum) #null con billie elish
+                except NoAlbumImgFound:
+                    raise NoAlbumImgFound
             else:
                 logger.info(f"Album {OnlineAlbumMetadata["title"]}:{idAlbum} gia registrato")
 
@@ -239,7 +239,7 @@ def uploadSongOnDB(filePath, fileName):
                 if not isArtistRegistred(artistID):
                     registerArtist(data["artist"]["id"], None, data["artist"]["name"])
                     os.mkdir(os.path.join(settings.MEDIA_ROOT, data["artist"]["name"])) #se esiste
-                    downloadArtistImg(artistID, data["artist"]["name"])
+                    download_artist_img(artistID, data["artist"]["name"])
                 
                 if not isAlbum_ArtistRegistred(data["artist"]["id"], idAlbum):
                     registerArtistAlbum(data["artist"]["id"], idAlbum, True)
