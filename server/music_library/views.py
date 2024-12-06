@@ -23,7 +23,7 @@ def indexSlugless(request):
 
 def index(request, slug):
 
-    print("slug: ", slug)
+    #print("slug: ", slug)
 
     if not request.user.is_authenticated:
         return redirect(reverse('login'))  # Redireziona usando il nome dell’UR
