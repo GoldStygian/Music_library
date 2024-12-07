@@ -4,12 +4,14 @@ from django.core.files.storage import FileSystemStorage
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
+from django.http import JsonResponse
+
 
 import os
 import traceback
 import logging
 
-from .function import functions, query
+from .function import functions, query, error
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +21,7 @@ from .forms import  LoginUserForm
 from django.contrib.auth import login, logout
 
 def indexSlugless(request):
-    return index(request, "album")
+    return render(request, 'base.html')
 
 def index(request, slug):
 
@@ -62,6 +64,7 @@ def index(request, slug):
                 data = {"artists":artists, "slug":slug}
 
                 return render(request, 'indexArtisti.html', data)
+
     else:
         return render(request, 'base.html')
 
@@ -71,9 +74,9 @@ def artist_page(request, artist_slug):
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
 
-        dataArtist = query.getArtist(artist_slug)
+        data_artist = query.getArtist(artist_slug)
 
-        songArtist = query.getTracksArtist(artist_slug)
+        # song_artist = query.getTracksArtist(artist_slug)
 
         result = query.getAllData(artist_slug)
 
@@ -120,7 +123,7 @@ def artist_page(request, artist_slug):
         # import pprint
         # pprint.pprint(structured_data)
 
-        context={"dataArtist": dataArtist, "data":structured_data}
+        context={"dataArtist": data_artist, "data":structured_data}
 
         return render(request, 'artista.html', context)
 
@@ -128,26 +131,38 @@ def artist_page(request, artist_slug):
         return redirect('index-slugless')
 
 def upload(request):
-
-    if request.method == 'POST':
-
-            #carico il video
-            file = request.FILES.get('songFile')
-            if file: 
-                file = request.FILES['songFile']
-                print(file.name)
-
-                fssv = FileSystemStorage(settings.MEDIA_ROOT)
-                fssv.save(file.name, file) # qui è possibile ridenominare il file prima di caricarlo
-                print("[uploading] ", file.name)
-                
-                try:
-                    functions.uploadSongOnDB(os.path.join(settings.MEDIA_ROOT, file.name), file.name)
-                except Exception:
-                    traceback.print_exc()
-                    os.remove(os.path.join(settings.MEDIA_ROOT, file.name))
     
-    return render(request, "upload.html")
+    if request.method == 'POST':
+        print("[d] diramazione POST")
+        # carico il file
+        file = request.FILES.get('songFile')
+        if file: 
+            print(file.name)
+            fssv = FileSystemStorage(settings.MEDIA_ROOT)
+            fssv.save(file.name, file)  # Salva il file
+            print("[uploading] ", file.name)
+
+            try:
+                functions.uploadSongOnDB(os.path.join(settings.MEDIA_ROOT, file.name), file.name)
+                return JsonResponse({"message": "Canzone caricata con successo!"})
+            
+            except error.NoAlbumImgFound:                
+                return JsonResponse({"message": "Non è stato possibile recuperare l'immagine dell'album"})
+            
+            except error.NoArtistImgFound:
+                return JsonResponse({"message": "Non è stato possibile recuperare l'immagine dell'artista"})
+            
+            except Exception:
+                traceback.print_exc()
+                return JsonResponse({"message": "Errore durante il caricamento della canzone"})
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        print("[d] diramazione ajax")
+        return render(request, 'upload.html')  
+    
+    print("[d] nessuna diramazione")
+    return redirect('index-slugless')
+
 
 def logIn(request):
     

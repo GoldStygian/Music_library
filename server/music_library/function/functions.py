@@ -138,7 +138,6 @@ def download_album_img(albumID):
         raise NoAlbumImgFound
 
 
-
 def extractArtist(artistsRow):
 
     #estraggo gli estisti dalla stringa ROW
@@ -239,8 +238,12 @@ def uploadSongOnDB(filePath, fileName):
                 if not isArtistRegistred(artistID):
                     registerArtist(data["artist"]["id"], None, data["artist"]["name"])
                     os.mkdir(os.path.join(settings.MEDIA_ROOT, data["artist"]["name"])) #se esiste
-                    download_artist_img(artistID, data["artist"]["name"])
-                
+                    
+                    try:
+                        download_artist_img(artistID, data["artist"]["name"])
+                    except NoArtistImgFound:
+                        raise NoArtistImgFound
+                    
                 if not isAlbum_ArtistRegistred(data["artist"]["id"], idAlbum):
                     registerArtistAlbum(data["artist"]["id"], idAlbum, True)
 
@@ -257,13 +260,18 @@ def uploadSongOnDB(filePath, fileName):
 
             logger.info(f"Caricamneto di {fileName} completato con successo")
 
+            return {"id_track": idTrack, "id_album": idAlbum, "id_artist": firtArtist}
+
     except TrackJustRegistred:
         logger.warning("Traccia gia registrata")
                 
     except Exception as error:
-        # rollback del DB (gestito da django)
-        # rollback file
         logger.error(traceback.format_exc())
+        # rollback del DB (gestito da django)
+        
+        # rollback file
+        os.remove(os.path.join(settings.MEDIA_ROOT, filePath))
+        
         raise error
 
 
