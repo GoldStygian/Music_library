@@ -23,26 +23,27 @@ def getMetadataByArtistID(artistID):
     try:
         return requests.get(f"https://musicbrainz.org/ws/2/artist/{artistID}?inc=url-rels&fmt=json").json()
     except Exception as error:
-        return None
-    
+        return error
 
 def getMetadataByrecordingID(recordingID):
     try:
         return requests.get(f"https://musicbrainz.org/ws/2/recording/{recordingID}?inc=artist-credits+annotation&fmt=json").json()
     except Exception as error:
-        return None
+        return error
     
 def getMetadataByAlbumID(albumID):
     try:
         return requests.get(f"https://musicbrainz.org/ws/2/release/{albumID}?inc=artist-credits&fmt=json").json()
     except Exception as error:
-        return None
+        return error
     
 def getCoverAlbumByAlbumID(albumID):
     try:
-        return requests.get(f"https://coverartarchive.org/release/{albumID}?fmt=json").json()
+        return requests.get(f"https://coverartarchive.org/release/{albumID}?fmt=json", timeout=10).json()
+    except requests.exceptions.Timeout:
+        raise requests.exceptions.Timeout
     except Exception as error:
-        return None
+        return error
     
 #data = getMetadataByArtistID
 #print(json.dumps(data, indent=4))

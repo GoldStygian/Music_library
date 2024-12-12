@@ -1,72 +1,110 @@
+// function getCookie(name) {
+//     let cookieValue = null;
+//     if (document.cookie && document.cookie !== '') {
+//         const cookies = document.cookie.split(';');
+//         for (let i = 0; i < cookies.length; i++) {
+//             const cookie = cookies[i].trim();
+//             if (cookie.substring(0, name.length + 1) === (name + '=')) {
+//                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+//                 break;
+//             }
+//         }
+//     }
+//     return cookieValue;
+// }
+
+function initReadMore() {
+    const desc = document.getElementById("descrizione");
+    const readMoreBtn = document.getElementById("readMoreBtn");
+
+    if (desc) {
+        const maxLength = 250;
+        const fullText = desc.textContent.trim();
+
+        if (fullText.length > maxLength) {
+            const truncatedText = fullText.slice(0, maxLength) + "...";
+            desc.textContent = truncatedText;
+            readMoreBtn.style.display = "inline-block";
+
+            readMoreBtn.addEventListener("click", function () {
+                if (desc.textContent === truncatedText) {
+                    desc.textContent = fullText;
+                    readMoreBtn.textContent = "Read Less";
+                } else {
+                    desc.textContent = truncatedText;
+                    readMoreBtn.textContent = "Read More";
+                }
+            });
+        }
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     // Delegazione eventi per i link con classe `.ajax-link`
     document.body.addEventListener("click", function (e) {
-        console.log("Evento click catturato sul body");
-        const link = e.target.closest(".ajax-link"); // Controlla se il click proviene da un `.ajax-link`
+        const link = e.target.closest(".ajax-link");
         if (link) {
-            e.preventDefault(); // Evita il comportamento predefinito
-            console.log("Link con classe .ajax-link trovato:", link.href);
+            console.log("Link Ajax Found")
+            e.preventDefault();
             const url = link.getAttribute("href");
 
-            // Effettua la richiesta AJAX
             fetch(url, {
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest" // Indica che la richiesta è AJAX
-                }
+                headers: { "X-Requested-With": "XMLHttpRequest" }
             })
             .then(response => {
                 if (!response.ok) throw new Error("Errore nel caricamento");
                 return response.text();
             })
             .then(html => {
-                document.getElementById("content").innerHTML = html; // Aggiorna il contenitore dinamico
-                history.pushState(null, "", url); // Aggiorna la URL senza ricaricare
+                document.getElementById("content").innerHTML = html;
+                history.pushState(null, "", url);
+                // Richiama la funzione per inizializzare lo script
+                initReadMore();
             })
             .catch(error => console.error("Errore:", error));
-        } else{
-
-            // Intercettazione del submit del form
-            const form = document.querySelector("form");
-            if (form) {
-                console.log("Form ajax trovato")
-                form.addEventListener("submit", function (e) {
-                    e.preventDefault(); // Blocca l'invio normale del form
-
-                    const formData = new FormData(form); // Crea l'oggetto FormData
-
-                    fetch(form.action, {
-                        method:"POST"
-                    })
-                    .then(response => {
-                        console.log("1")
-                        if (!response.ok) throw new Error("Errore durante l'invio del form");
-                        return response.text();
-                    })
-                    .then(html => {
-                        console.log("11")
-                        document.getElementById("form-response").innerHTML = JSON.parse(html).message; // Aggiorna il contenitore dinamico con la risposta del server
-                        
-                    })
-                    .catch(error => {
-                        console.error("Errore:", error);
-                    });
-                });
-            }
         }
-
     });
+
+    // Intercettazione del submit del form
+    // const form = document.querySelector("form");
+    // if (form) {
+    //     console.log("Form trovato");
+    //     form.addEventListener("submit", function (e) {
+    //         e.preventDefault(); // Blocca l'invio normale del form
+
+    //         const formData = new FormData(form);
+    //         const csrftoken = getCookie('csrftoken');
+    //         console.log("CSRF Token: ", csrftoken)
+
+    //         fetch(form.action, {
+    //             method: "POST",
+    //             body: formData,
+    //             headers: { 
+    //                 "X-Requested-With": "XMLHttpRequest",
+    //                 "X-CSRFToken": csrftoken
+    //              }
+    //         })
+    //         .then(response => {
+    //             if (!response.ok) throw new Error("Errore durante l'invio del form");
+    //             return response.text();
+    //         })
+    //         .then(html => {
+    //             console.log("Risposta ricevuta:", html);
+    //             document.getElementById("form-response").innerHTML = JSON.parse(html).message;
+    //         })
+    //         .catch(error => {
+    //             console.error("Errore:", error);
+    //         });
+    //     });
+    // }
 
     // Gestione della navigazione con il pulsante "indietro" del browser
     window.addEventListener("popstate", function () {
         fetch(location.href, {
-            headers: {
-                "X-Requested-With": "XMLHttpRequest"
-            }
+            headers: { "X-Requested-With": "XMLHttpRequest" }
         })
         .then(response => response.text())
         .then(html => document.getElementById("content").innerHTML = html)
         .catch(error => console.error("Errore:", error));
-    })
-
-
+    });
 });

@@ -138,7 +138,7 @@ def getArtist(id: str):
             'id': result[0],
             'country': result[1],
             'name': result[2],
-            'extra': result[3]
+            'descrizione': result[3]
         }
 
         return result

@@ -1,131 +1,135 @@
 <style>
 
-h1, h2, p {
-    margin: 0; /* Rimuove margini di default */
-}
+    h1, h2, p {
+        margin: 0; /* Rimuove margini di default */
+    }
 
-/* Header */
-.artist-header {
-    margin-top: 5px;
-    border: 0px solid;
-    border-radius: 15px;
-    display: flex; /* Usa flexbox per l'allineamento */
-    align-items: center; /* Allinea verticalmente al centro */
-    background: linear-gradient(45deg, #D32F2F, #413d3e);/* #4CAF50; /* Colore di sfondo verde scuro */
-    color: white; /* Colore del testo bianco */
-    padding: 20px; /* Padding interno */
-    background: linear-gradient(45deg, #D32F2F, #311211, #D32F2F);
-    background-size: 300% 300%;
-    animation: gradientAnimation 5s ease infinite;
-}
-
-@keyframes gradientAnimation {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.artist-photo img {
-    border-radius: 50%; /* Immagine rotonda */
-    max-width: 150px; /* Limita la larghezza dell'immagine */
-    margin-right: 20px; /* Margine a destra */
-}
-
-/* Info Artista */
-.artist-info {
-    flex-grow: 1; /* Occupa lo spazio rimanente */
-}
-
-.artist-bio {
-    font-size: 0.9em; /* Dimensione del font più piccola */
-    margin-top: 5px; /* Margine sopra la biografia */
-}
-
-/* Contenuto Principale */
-.main-content {
-    padding: 20px; /* Padding interno */
-}
-
-/* Sezioni */
-.songs-section, .albums-section, .collaboration-section {
-    margin-bottom: 30px; /* Margine inferiore tra le sezioni */
-}
-
-h2 {
-    border-bottom: 2px solid #D32F2F;/* #4CAF50; /* Sottolinea il titolo */
-    padding-bottom: 10px; /* Padding inferiore */
-}
-
-/* Lista Canzoni */
-.song-list {
-    list-style-type: none; /* Rimuove i punti dalla lista */
-    padding: 0; /* Rimuove il padding */
-}
-
-.song-list li {
-    padding: 10px; /* Padding interno per ogni elemento */
-    transition: background-color 0.3s; /* Transizione per l'effetto hover */
-}
-
-.song-list li:hover {
-    background-color: #e0e0e0; /* Colore di sfondo al passaggio del mouse */
-}
-
-/* Griglia Album */
-.album-grid {
-    margin-top: 5px; 
-    display: grid; /* Usa grid layout per la griglia degli album */
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Colonne responsive */
-    gap: 10px; /* Spazio tra gli album */
-}
-
-.album-card {
-    background-color: rgb(87, 87, 87); /* Colore di sfondo bianco per le card */
-    border: 0px solid; /* Bordo grigio chiaro */
-    border-radius: 8px; /* Angoli arrotondati */
-    text-align: center; /* Allinea il testo al centro */
-    padding: 10px; /* Padding interno */
-    transition: transform 0.3s; /* Transizione per l'effetto hover */
-}
-
-/* Immagini degli Album */
-.album-card img {
-    width: 100%; /* Larghezza al 100% del contenitore */
-    height: auto; /* Mantiene l'aspetto proporzionale dell'immagine */
-    object-fit: cover; /* Adatta l'immagine al contenitore senza distorsioni */
-    border-radius: 5px; /* Angoli arrotondati per l'immagine */
-}
-
-.album-card:hover {
-    transform: scale(1.05); /* Effetto zoom al passaggio del mouse */
-}
-
-/* Footer */
-.footer {
-    text-align: center; /* Allinea il testo al centro */
-    padding: 10px; /* Padding interno */
-    background-color: #D32F2F;/*#4CAF50; /* Colore di sfondo verde scuro */
-    color: white; /* Colore del testo bianco */
-    position: relative; /* Posizione relativa per il footer */
-    bottom: 0; /* Posizionamento in fondo */
-    width: 100%; /* Larghezza al 100% */
-}
-
-/* Media Queries per la Responsività */
-@media (max-width: 768px) {
+    /* Header */
     .artist-header {
-        flex-direction: column; /* Cambia l'orientamento su schermi piccoli */
-        align-items: flex-start; /* Allinea gli elementi a sinistra */
+        margin-top: 5px;
+        border: 0px solid;
+        border-radius: 15px;
+        display: flex; /* Usa flexbox per l'allineamento */
+        align-items: center; /* Allinea verticalmente al centro */
+        background: linear-gradient(45deg, #D32F2F, #413d3e);/* #4CAF50; /* Colore di sfondo verde scuro */
+        color: white; /* Colore del testo bianco */
+        padding: 20px; /* Padding interno */
+        background: linear-gradient(45deg, #D32F2F, #311211, #D32F2F);
+        background-size: 300% 300%;
+        animation: gradientAnimation 5s ease infinite;
+    }
+
+    @keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
     }
 
     .artist-photo img {
-        margin: 0 0 10px 0; /* Margine sotto l'immagine */
+        border-radius: 50%; /* Immagine rotonda */
+        max-width: 150px; /* Limita la larghezza dell'immagine */
+        margin-right: 20px; /* Margine a destra */
     }
 
-    .album-grid {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Colonne minime più piccole */
+    /* Info Artista */
+    .artist-info {
+        flex-grow: 1; /* Occupa lo spazio rimanente */
     }
-}
+
+    .artist-bio {
+        font-size: 0.9em; /* Dimensione del font più piccola */
+        margin-top: 5px; /* Margine sopra la biografia */
+    }
+
+    /* Contenuto Principale */
+    .main-content {
+        padding: 20px; /* Padding interno */
+    }
+
+    /* Sezioni */
+    .songs-section, .albums-section, .collaboration-section {
+        margin-bottom: 30px; /* Margine inferiore tra le sezioni */
+    }
+
+    h2 {
+        border-bottom: 2px solid #D32F2F;/* #4CAF50; /* Sottolinea il titolo */
+        padding-bottom: 10px; /* Padding inferiore */
+    }
+
+    /* Lista Canzoni */
+    .song-list {
+        list-style-type: none; /* Rimuove i punti dalla lista */
+        padding: 0; /* Rimuove il padding */
+    }
+
+    .song-list li {
+        padding: 10px; /* Padding interno per ogni elemento */
+        transition: background-color 0.3s; /* Transizione per l'effetto hover */
+    }
+
+    .song-list li:hover {
+        background-color: #e0e0e0; /* Colore di sfondo al passaggio del mouse */
+    }
+
+    /* Griglia Album */
+    .album-grid {
+        margin-top: 5px; 
+        display: grid; /* Usa grid layout per la griglia degli album */
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Colonne responsive */
+        gap: 10px; /* Spazio tra gli album */
+    }
+
+    .album-card {
+        background-color: rgb(87, 87, 87); /* Colore di sfondo bianco per le card */
+        border: 0px solid; /* Bordo grigio chiaro */
+        border-radius: 8px; /* Angoli arrotondati */
+        text-align: center; /* Allinea il testo al centro */
+        padding: 10px; /* Padding interno */
+        transition: transform 0.3s; /* Transizione per l'effetto hover */
+    }
+
+    /* Immagini degli Album */
+    .album-card img {
+        width: 100%; /* Larghezza al 100% del contenitore */
+        height: auto; /* Mantiene l'aspetto proporzionale dell'immagine */
+        object-fit: cover; /* Adatta l'immagine al contenitore senza distorsioni */
+        border-radius: 5px; /* Angoli arrotondati per l'immagine */
+    }
+
+    .album-card:hover {
+        transform: scale(1.05); /* Effetto zoom al passaggio del mouse */
+    }
+
+    /* Footer */
+    .footer {
+        text-align: center; /* Allinea il testo al centro */
+        padding: 10px; /* Padding interno */
+        background-color: #D32F2F;/*#4CAF50; /* Colore di sfondo verde scuro */
+        color: white; /* Colore del testo bianco */
+        position: relative; /* Posizione relativa per il footer */
+        bottom: 0; /* Posizionamento in fondo */
+        width: 100%; /* Larghezza al 100% */
+    }
+
+    /* Media Queries per la Responsività */
+    @media (max-width: 768px) {
+        .artist-header {
+            flex-direction: column; /* Cambia l'orientamento su schermi piccoli */
+            align-items: flex-start; /* Allinea gli elementi a sinistra */
+        }
+
+        .artist-photo img {
+            margin: 0 0 10px 0; /* Margine sotto l'immagine */
+        }
+
+        .album-grid {
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Colonne minime più piccole */
+        }
+    }
+
+    #readMoreBtn{
+        text-decoration: underline #FF3028;;
+    }
 </style>
 
     <!-- Header -->
@@ -135,7 +139,10 @@ h2 {
         </div>
         <div class="artist-info">
             <h1 class="artist-name">{{  dataArtist.name }}</h1>
-            <p class="artist-bio">Breve biografia o descrizione dell'artista. Informazioni essenziali e accattivanti.</p>
+            {% if dataArtist.descrizione %}
+            <p class="artist-bio" id="descrizione">{{ dataArtist.descrizione }}</p>
+            <a id="readMoreBtn" style="display: none;">Read More</a>
+            {% endif %}
         </div>
     </header>
 

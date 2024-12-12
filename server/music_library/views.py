@@ -21,6 +21,10 @@ from .forms import  LoginUserForm
 from django.contrib.auth import login, logout
 
 def indexSlugless(request):
+
+    if not request.user.is_authenticated:
+        return redirect(reverse('login'))  # Redireziona usando il nome dell’UR
+
     return render(request, 'base.html')
 
 def index(request, slug):
@@ -132,8 +136,9 @@ def artist_page(request, artist_slug):
 
 def upload(request):
     
+    context = {}
+
     if request.method == 'POST':
-        print("[d] diramazione POST")
         # carico il file
         file = request.FILES.get('songFile')
         if file: 
@@ -144,24 +149,32 @@ def upload(request):
 
             try:
                 functions.uploadSongOnDB(os.path.join(settings.MEDIA_ROOT, file.name), file.name)
-                return JsonResponse({"message": "Canzone caricata con successo!"})
+                # return JsonResponse({"message": Canzone caricata con successo!})
+                context["message"] = "Canzone caricata con successo!"
+
+            except error.TrackJustRegistred:
+                context["message"] = "Traccia già registrata"
             
+            except error.AlbumServerTimeout:
+                context["message"] = "Non è stato possibile recuperare l'immagine dell'album (timeout risposta dai server)"
+
             except error.NoAlbumImgFound:                
-                return JsonResponse({"message": "Non è stato possibile recuperare l'immagine dell'album"})
+                # return JsonResponse({"message": "Non è stato possibile recuperare l'immagine dell'album"})
+                context["message"] = "Non è stato possibile recuperare l'immagine dell'album (possibile che i server non l'abbiano fornita)"
             
             except error.NoArtistImgFound:
-                return JsonResponse({"message": "Non è stato possibile recuperare l'immagine dell'artista"})
-            
+                # return JsonResponse({"message": "Non è stato possibile recuperare l'immagine dell'artista"})
+                context["message"] = "Non è stato possibile recuperare l'immagine dell'artista"
+
             except Exception:
                 traceback.print_exc()
-                return JsonResponse({"message": "Errore durante il caricamento della canzone"})
+                # return JsonResponse({"message": "Errore durante il caricamento della canzone"})
+                context["message"] = "Errore durante il caricamento della canzone"
 
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        print("[d] diramazione ajax")
-        return render(request, 'upload.html')  
+    # if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+    #     return render(request, 'upload.html')  
     
-    print("[d] nessuna diramazione")
-    return redirect('index-slugless')
+    return render(request, 'upload.html', context)
 
 
 def logIn(request):

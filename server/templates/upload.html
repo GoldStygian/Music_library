@@ -1,3 +1,6 @@
+{% extends './base.html' %}
+{% block content %}
+
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
@@ -6,4 +9,9 @@
 
     <button type="submit">Carica</button>
 </form>
-<div id="form-response"></div>
+
+{% if message %}
+<div id="form-response">{{message}}</div>
+{% endif %}
+
+{% endblock content %}

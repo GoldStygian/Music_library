@@ -9,3 +9,6 @@ class NoAlbumImgFound(CustomError):
 
 class NoArtistImgFound(CustomError):
     pass
+
+class AlbumServerTimeout(CustomError):
+    pass

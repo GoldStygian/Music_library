@@ -133,10 +133,13 @@ def download_album_img(albumID):
     
     data = mdAPI.getCoverAlbumByAlbumID(albumID) #null con billie elish
     if data:
-        download_image(data["images"][0]["image"], settings.MEDIA_ROOT+rf"/Album/{albumID}.jpg")
+        print("donloading: ", data["images"][0]["image"])
+        try:
+            download_image(data["images"][0]["image"], settings.MEDIA_ROOT+rf"/Album/{albumID}.jpg")
+        except requests.exceptions.Timeout:
+            raise AlbumServerTimeout
     else:
         raise NoAlbumImgFound
-
 
 def extractArtist(artistsRow):
 
@@ -209,12 +212,18 @@ def uploadSongOnDB(filePath, fileName):
                     
                     dataArtist = mdAPI.getMetadataByArtistID(artistID)
                     
-                    registerArtist(artistID, dataArtist["area"]["name"], dataArtist["name"], "to do")
+                    description = lastFmAPI.get_artist_description_from_lastfm(artistID, settings.LAST_FM_API_KEY)
+
+                    # registerArtist(artistID, dataArtist["area"]["name"], dataArtist["name"], description if description else "")
+                    registerArtist(artistID, dataArtist["area"]["name"], dataArtist["name"], description)
 
                     os.mkdir(os.path.join(settings.MEDIA_ROOT, dataArtist["name"])) #se esiste
                     download_artist_img(artistID, dataArtist["name"])
                 else:
                     logger.info(f"Artista {data["name"]}:{artistID} gia registrato")
+            
+            logger.debug("Metadati traccia estratti trmite API (SUCCESS)")
+
 
             # album
             # - artista ID 
@@ -228,15 +237,21 @@ def uploadSongOnDB(filePath, fileName):
                 registerAlbum(idAlbum, OnlineAlbumMetadata["title"], OnlineAlbumMetadata["date"])
                 try:
                     download_album_img(idAlbum) #null con billie elish
+                except AlbumServerTimeout:
+                    raise AlbumServerTimeout
                 except NoAlbumImgFound:
                     raise NoAlbumImgFound
             else:
                 logger.info(f"Album {OnlineAlbumMetadata["title"]}:{idAlbum} gia registrato")
 
+
             # registro le associazioni proprietarie gli album
             for data in OnlineAlbumMetadata["artist-credit"]: #inserendo gli artisti dell'album (non per forza hanno tracce)
+                artistID = data["artist"]["id"]
                 if not isArtistRegistred(artistID):
-                    registerArtist(data["artist"]["id"], None, data["artist"]["name"])
+
+                    description = lastFmAPI.get_artist_description_from_lastfm(artistID, settings.LAST_FM_API_KEY)
+                    registerArtist(data["artist"]["id"], None, data["artist"]["name"], description)
                     os.mkdir(os.path.join(settings.MEDIA_ROOT, data["artist"]["name"])) #se esiste
                     
                     try:
@@ -246,6 +261,8 @@ def uploadSongOnDB(filePath, fileName):
                     
                 if not isAlbum_ArtistRegistred(data["artist"]["id"], idAlbum):
                     registerArtistAlbum(data["artist"]["id"], idAlbum, True)
+
+            logger.debug("Metadati album estratti trmite API (SUCCESS)")
 
             #registro gli artisti
             for data in OnlineTrackMetadata["artist-credit"]:
@@ -264,6 +281,7 @@ def uploadSongOnDB(filePath, fileName):
 
     except TrackJustRegistred:
         logger.warning("Traccia gia registrata")
+        raise TrackJustRegistred
                 
     except Exception as error:
         logger.error(traceback.format_exc())
