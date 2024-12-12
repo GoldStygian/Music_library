@@ -2,6 +2,8 @@ ULTIMO TASK:
 ajax in uload (form) invia 3 richieste (get) invece di 1 --> 3 chiamate ad uploadSongOnDB
 Problema variant (hanno lo stesso id delle originali)
 
+rescan metadata functio
+nella pagina dell'artista mostrare in qualche modo le canzoni a cui ha preso gli album (non solo con gli album come gia implementato)
 aggiungere il rollback com "with transiction"
 implementare pagina upload
 funzione di ricerca
