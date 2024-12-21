@@ -5,7 +5,8 @@
     {% csrf_token %}
 
     <label>Inserisci una canzone</label>
-    <input type="file" name="songFile" accept=".mp3, .flac">
+    <input type="file" name="songFile" accept=".mp3, .flac"><br>
+    Variante <input type="checkbox" name="variantCheckbox"><br>
 
     <button type="submit">Carica</button>
 </form>

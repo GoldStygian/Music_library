@@ -80,7 +80,7 @@
 
     .navbar {
         display: flex;
-        overflow: hidden;
+        /* overflow: hidden; */
         background-color: rgb(87, 87, 87);
 
         border: 0px solid;
@@ -102,12 +102,12 @@
             padding-bottom: 2px;
         }
         
-        .dropdown {
+        .dropdownCLASS {
             float: left;
             overflow: hidden;
         }
         
-        .dropdown .dropbtn {
+        .dropdownCLASS .dropbtn {
             font-size: 16px;  
             border: none;
             outline: none;
@@ -118,7 +118,7 @@
             margin: 0;
         }
         
-        .navbar a:hover, .dropdown:hover .dropbtn {
+        .navbar a:hover, .dropdownCLASS:hover .dropbtn {
             border-top: 2px solid red;
             border-bottom: 2px solid red;
             border-radius: 10px;
@@ -159,6 +159,42 @@
     .navbar{
         margin: 5px;
     }
+
+    /* ----------- */
+    /* 
+    .dropbtn {
+    background-color: #3498DB;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    }
+
+    .dropbtn:hover, .dropbtn:focus {
+    background-color: #2980B9;
+    }
+
+    .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    }
+
+    .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    }
+
+    .dropdown a:hover {background-color: #ddd;} */
+
+    .show {display: block;}
     
 </style>
 
@@ -184,20 +220,24 @@
         <div style="font-size:30px;cursor:pointer;" onclick="openNav()">&#9776;</div>
 
         <!-- Link di navigazione per cambiare pagina tramite AJAX -->
+        <a href="{% url 'search' %}" class="ajax-link"><img src="{% static 'icone/Search.ico' %}"></a>
         <a href="{% url 'index' 'playlist' %}" class="ajax-link">Playlist</a>
         <a href="{% url 'index' 'artisti' %}" class="ajax-link">Artisti</a>
         <a href="{% url 'index' 'album' %}" class="ajax-link">Album</a>
         <a href="{% url 'index' 'brani' %}" class="ajax-link">Brani</a>
+
         
-        <div class="dropdown">
-          <button class="dropbtn">Menu
-            <i class="fa fa-caret-down"></i>
-          </button>
-          <div class="dropdown-content">
-            <a href="{% url 'upload' %}" class="ajax-link">Upload</a>
-          </div>
+        <div class="dropdownCLASS">
+            <button onclick="myFunction()" class="dropbtn">Menu</button>
+            <div id="myDropdown" class="dropdown-content">
+                <a href="{% url 'upload' %}">Upload</a>
+                <a href="{% url 'search' %}" class="ajax-link">Search</a>
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </div>
         </div>
-        
+
     </div>
 
     {% include 'backgroundPlayer.html' %}
@@ -210,6 +250,28 @@
     </div>
 
 </body>
+
+<script>
+    /* When the user clicks on the button, 
+    toggle between hiding and showing the dropdown content */
+    function myFunction() {
+      document.getElementById("myDropdown").classList.toggle("show");
+    }
+    
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+</script>
 
 <script>
     function openNav() {

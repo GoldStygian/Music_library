@@ -68,7 +68,7 @@ service = Service(driver_path)
 
 # Imposta Edge in modalità headless (opzionale)
 options = Options()
-options.add_argument('--headless')  # Rimuovi questa riga se vuoi vedere la finestra del browser
+#options.add_argument('--headless')  # Rimuovi questa riga se vuoi vedere la finestra del browser
 
 # Inizializza il driver con il servizio
 driver = webdriver.Edge(service=service, options=options)
@@ -107,7 +107,7 @@ for element in elements:
         channel_name = element.find_element(By.CLASS_NAME, 'style-scope ytd-channel-name').text
         
         # Thumbnail del video (URL dell'immagine)
-        thumbnail_url = element.find_element(By.CLASS_NAME, 'yt-core-image yt-core-image--fill-parent-height yt-core-image--fill-parent-width yt-core-image--content-mode-scale-aspect-fill yt-core-image--loaded').get_attribute('src')
+        # thumbnail_url = element.find_element(By.CLASS_NAME, 'yt-core-image yt-core-image--fill-parent-height yt-core-image--fill-parent-width yt-core-image--content-mode-scale-aspect-fill yt-core-image--loaded').get_attribute('src')
         # thumbnail_url = element.find_element(By.TAG_NAME, 'img').get_attribute('src')
 
         # Stampa tutte le informazioni estratte
@@ -127,4 +127,3 @@ for element in elements:
 
 # Chiudi il browser
 driver.quit()
-

@@ -6,19 +6,35 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
 from django.http import JsonResponse
 
-
 import os
 import traceback
 import logging
 
-from .function import functions, query, error
 
-logger = logging.getLogger(__name__)
+#my lib
+from .function import functions, query, error
 
 #login
 from django.contrib.auth import login
 from .forms import  LoginUserForm
 from django.contrib.auth import login, logout
+
+#ChrmeDriver
+from selenium import webdriver
+from selenium.webdriver.edge.service import Service
+from selenium.webdriver.edge.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
+import googleapiclient.discovery
+import pprint as pprint
+
+import requests
+from django.http import HttpResponse
+
+logger = logging.getLogger(__name__)
 
 def indexSlugless(request):
 
@@ -89,6 +105,7 @@ def artist_page(request, artist_slug):
         for entry in result:
             album_id = entry[0]
             traccia_id = entry[5]
+            variant = entry[11]
             
             album_entry = {
                 "album_nome": entry[1],
@@ -115,13 +132,13 @@ def artist_page(request, artist_slug):
                     structured_data["albumProprietari"][album_id] = album_entry
 
                 # Aggiungi la traccia
-                structured_data["albumProprietari"][album_id]["tracce"][traccia_id] = traccia_entry
+                structured_data["albumProprietari"][album_id]["tracce"][f"{traccia_id}-{variant}"] = traccia_entry
             else:  # Non Proprietario
                 if album_id not in structured_data["albumNonProprietari"]:
                     structured_data["albumNonProprietari"][album_id] = album_entry
 
                 # Aggiungi la traccia
-                structured_data["albumNonProprietari"][album_id]["tracce"][traccia_id] = traccia_entry
+                structured_data["albumNonProprietari"][album_id]["tracce"][f"{traccia_id}-{variant}"] = traccia_entry
 
         # Stampa il risultato
         # import pprint
@@ -133,6 +150,71 @@ def artist_page(request, artist_slug):
 
     else:
         return redirect('index-slugless')
+
+
+def search(request):
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+
+        # API information
+        api_service_name = "youtube"
+        api_version = "v3"
+        DEVELOPER_KEY = "AIzaSyD_-bYTsQkcImAuiXpyfEDnsQSijxy7s6c"
+        # API client
+        youtube = googleapiclient. discovery.build(
+        api_service_name, api_version, developerKey=DEVELOPER_KEY)
+        # Request body
+        #URl of VIdeo: https://www.youtube.com/watch?v=OwnsPhzZQEM
+        youtube_request = youtube.search().list(
+            part='snippet',
+            q="lady gaga",
+            maxResults=3,
+            order="relevance",
+            type="video",
+            videoEmbeddable="true"
+        )
+
+        # Parametri Importanti:
+        
+        # part:
+        # Specifica quali campi del risultato vuoi ottenere. In questo caso, snippet include informazioni come titolo, descrizione, miniature, canale, ecc.
+        
+        # q:
+        # La query di ricerca, cioè il termine che vuoi cercare su YouTube. In questo esempio, stai cercando i video relativi a "Whistling Diesel".
+        
+        # maxResults:
+        # Specifica il numero massimo di risultati da restituire (in questo caso, 3).
+        
+        # order:
+        # Specifica come ordinare i risultati. In questo caso, "date" ordina i risultati dal più recente al più vecchio.
+        
+        # type:
+        # Specifica il tipo di risorsa da cercare. Può essere:
+        # "video": cerca solo video.
+        # "channel": cerca solo canali.
+        # "playlist": cerca solo playlist.
+        # Qui hai scelto "video".
+
+        youtube_response = youtube_request.execute()
+
+        pprint.pprint(youtube_response)
+
+        video_data = []
+        for item in youtube_response["items"]:
+            video_data.append({
+                "video_id": item["id"]["videoId"],
+                "title": item["snippet"]["title"],
+                "description": item["snippet"]["description"],
+                "thumbnail": item["snippet"]["thumbnails"]["high"]["url"],
+                "published_at": item["snippet"]["publishedAt"],
+            })
+
+
+        return render(request, 'search.html', {"videos": video_data})
+    
+    else:
+        return redirect('index-slugless')
+
 
 def upload(request):
     
@@ -148,12 +230,14 @@ def upload(request):
             print("[uploading] ", file.name)
 
             try:
-                functions.uploadSongOnDB(os.path.join(settings.MEDIA_ROOT, file.name), file.name)
+                variantCheckbox = request.POST.get("variantCheckbox")
+                functions.uploadSongOnDB(os.path.join(settings.MEDIA_ROOT, file.name), file.name, variantCheckbox)
                 # return JsonResponse({"message": Canzone caricata con successo!})
                 context["message"] = "Canzone caricata con successo!"
 
             except error.TrackJustRegistred:
                 context["message"] = "Traccia già registrata"
+                os.remove(os.path.join(settings.MEDIA_ROOT, file.name))
             
             except error.AlbumServerTimeout:
                 context["message"] = "Non è stato possibile recuperare l'immagine dell'album (timeout risposta dai server)"
@@ -175,7 +259,6 @@ def upload(request):
     #     return render(request, 'upload.html')  
     
     return render(request, 'upload.html', context)
-
 
 def logIn(request):
     

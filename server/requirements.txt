@@ -1,6 +1,9 @@
 beautifulsoup4
-selenium
 psycopg2
 musicbrainzngs
 requests
 mutagen
+
+-- da definitre: 
+selenium
+google-api-python-client

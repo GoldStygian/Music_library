@@ -1,0 +1,24 @@
+<h1>YouTube Search Results</h1>
+
+<iframe width="1280" height="720" src="https://www.youtube.com/embed/kPa7bsKwL-c" title="Lady Gaga, Bruno Mars - Die With A Smile (Official Music Video)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="1280" height="720" src="https://www.youtube.com/embed/NBWKnBKyDqc?list=PLyZ0DGZE-bGJdXM8poOXt-WGFL8Drvqej" title="egzod &amp; maestro chives ft. neoni - royalty // slowed &amp; reverb" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<div id="video-list">
+    {% for video in videos %}
+    <div class="video-item">
+        <h2>{{ video.title }}</h2>
+        <img src="{{ video.thumbnail }}" alt="Thumbnail" style="width: 300px; height: auto;">
+        <p>{{ video.description }}</p>
+        <p>Published at: {{ video.published_at }}</p>
+        <!-- Embedding the YouTube video -->
+        <iframe 
+            width="560" 
+            height="315" 
+            src="https://www.youtube.com/embed/{{ video.video_id }}" 
+            frameborder="0" 
+            allowfullscreen>
+        </iframe>
+        <hr>
+    </div>
+    {% endfor %}
+</div>

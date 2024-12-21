@@ -167,9 +167,14 @@ def extractArtist(artistsRow):
     return [found_artists, found_artists]
 
 
-def uploadSongOnDB(filePath, fileName):
+def uploadSongOnDB(filePath, fileName, variant):
 
     logger.info(f"Caricando {fileName}")
+
+    # reg !var -> exception
+    # reg var -> incremento variant
+    # !reg !var -> inserimento normale
+    # !reg var -> set variant to 1
 
     try:
         with transaction.atomic():
@@ -183,9 +188,25 @@ def uploadSongOnDB(filePath, fileName):
             idTrack = mutagenIstance.getIDtrack()
             # logger.debug("ID traccia: ", idTrack)
             print("id: ", idTrack)
+            
+            n_variant = 0
+            if isTrackRegistred(idTrack): 
 
-            if isTrackRegistred(idTrack):
-                raise TrackJustRegistred
+                if variant: # reg var
+                    n_variant = getVariantNum(idTrack) + 1
+
+                else: #reg !var
+                    raise TrackJustRegistred
+                
+            else:
+                
+                if variant:
+                    n_variant = getVariantNum(idTrack) + 1
+
+                else:
+                    n_variant = 0     
+
+
 
             idAlbum = mutagenIstance.getIDalbum()
             # logger.debug("ID album: ", idAlbum)
@@ -273,7 +294,8 @@ def uploadSongOnDB(filePath, fileName):
             # spostare il file nel primo artista che compare
             shutil.move(filePath, os.path.join(settings.MEDIA_ROOT, firtArtist))
 
-            registerTrack(idTrack, mutagenIstance.getTitleTrack(), mutagenIstance.getArtistTrack(), listArtist ,idAlbum, mutagenIstance.getDurationTrack(), f"{firtArtist}/{fileName}")
+            # registro la traccia
+            registerTrack(idTrack, mutagenIstance.getTitleTrack(), mutagenIstance.getArtistTrack(), listArtist ,idAlbum, mutagenIstance.getDurationTrack(), f"{firtArtist}/{fileName}", n_variant)
 
             logger.info(f"Caricamneto di {fileName} completato con successo")
 

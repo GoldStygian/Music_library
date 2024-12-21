@@ -20,12 +20,23 @@ def isTrackRegistred(idTrack):
     except Exception as error:
         raise error
     
-def registerTrack(idTraccia, titolo, autore, artisti, idAlbum, durata, fileName):
+def getVariantNum(idTrack):
 
     try:
-        query = "INSERT INTO traccia VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        query = "SELECT variant FROM traccia WHERE id=%s"
         with connection.cursor() as cursor:
-            cursor.execute(query, (idTraccia, titolo, autore, artisti, idAlbum, durata, fileName, ))
+            cursor.execute(query, (idTrack, ))
+            return cursor.fetchone()[0]
+            
+    except Exception as error:
+        raise error
+
+def registerTrack(idTraccia, titolo, autore, artisti, idAlbum, durata, fileName, variant):
+
+    try:
+        query = "INSERT INTO traccia VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        with connection.cursor() as cursor:
+            cursor.execute(query, (idTraccia, titolo, autore, artisti, idAlbum, durata, fileName, variant, ))
     except Exception as error:
         raise error
 
@@ -234,7 +245,8 @@ def getAllData(idArtist: str):
                 T.autore,
                 T.artisti_partecipanti,
                 T.durata,
-                T.file_name
+                T.file_name,
+                T.variant
             FROM 
                 album AS A
             JOIN 
@@ -246,14 +258,8 @@ def getAllData(idArtist: str):
             WHERE 
                 AA.artista_id = %s
             GROUP BY 
-                AA.album_id, A.nome, A.data, AA.proprietario, T.id, T.titolo, T.autore, T.artisti_partecipanti, T.durata, T.file_name
+                AA.album_id, A.nome, A.data, AA.proprietario, T.id, T.titolo, T.autore, T.artisti_partecipanti, T.durata, T.file_name, T.variant
         """
-
-                #         A.id IN (
-                #     SELECT album_id
-                #     FROM artista_album
-                #     WHERE artista_id = %s
-                # )
 
         with connection.cursor() as cursor:
             cursor.execute(query, (idArtist, ))
