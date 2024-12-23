@@ -152,6 +152,41 @@ def artist_page(request, artist_slug):
         return redirect('index-slugless')
 
 
+def album_page(request, album_slug):
+
+    print("slug: ", album_slug)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        
+        album = query.getAlbum(album_slug)
+        # pprint.pprint(album)
+
+        tracks_row = query.getTrackFromAlbum(album_slug)
+        # pprint.pprint(tracks)
+        
+        tracks = [
+            {
+                "track_id": track[0],
+                "title": track[1],
+                "artist": track[2],
+                "album": track[3],
+                "album_id": track[4],
+                "duration": track[5],
+                "file_path": track[6],
+                "play_count": track[7],
+            }
+            for track in tracks_row
+        ]
+        
+
+        context={"album": album, "tracks": tracks}
+
+        return render(request, 'album.html', context)
+
+    else:
+        return redirect('index-slugless')
+    
+
 def search(request):
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':

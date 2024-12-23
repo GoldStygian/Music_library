@@ -5,7 +5,7 @@
     }
 
     /* Header */
-    .artist-header {
+    .album-header {
         margin-top: 5px;
         border: 0px solid;
         border-radius: 15px;
@@ -25,20 +25,10 @@
     100% { background-position: 0% 50%; }
     }
 
-    .artist-photo img {
+    .album-photo img {
         border-radius: 50%; /* Immagine rotonda */
         max-width: 150px; /* Limita la larghezza dell'immagine */
         margin-right: 20px; /* Margine a destra */
-    }
-
-    /* Info Artista */
-    .artist-info {
-        flex-grow: 1; /* Occupa lo spazio rimanente */
-    }
-
-    .artist-bio {
-        font-size: 0.9em; /* Dimensione del font più piccola */
-        margin-top: 5px; /* Margine sopra la biografia */
     }
 
     /* Contenuto Principale */
@@ -133,16 +123,13 @@
 </style>
 
     <!-- Header -->
-    <header class="artist-header">
-        <div class="artist-photo">
-            <img src="/media/{{dataArtist.name}}/cover.jpg" alt="Foto dell'Artista">
+    <header class="album-header">
+        <div class="album-photo">
+            <img src="/media/Album/{{ album.id }}.jpg" alt="Foto dell'Album">
         </div>
-        <div class="artist-info">
-            <h1 class="artist-name">{{  dataArtist.name }}</h1>
-            {% if dataArtist.descrizione %}
-            <p class="artist-bio" id="descrizione">{{ dataArtist.descrizione }}</p>
-            <a id="readMoreBtn" style="display: none;">Read More</a>
-            {% endif %}
+        <div class="album-info">
+            <h1 class="album-name">{{ album.nome }}</h1>
+            <div class="album-data">{{ album.data}}</div>
         </div>
     </header>
 
@@ -152,39 +139,26 @@
         <section class="songs-section">
             <h2>Canzoni</h2>
             <ul class="song-list">
-                {% for album_id, album in data.albumProprietari.items %}
-                    {% for traccia_id, traccia in album.tracce.items %}
-                        <li>
-                            🎵 <a href="#" onclick="changeTrack('/media/{{ traccia.file_name }}', '{{ traccia.titolo }}', '{{ traccia.autore }}', '/media/Album/{{ album_id }}.jpg'); return false;">
-                                {{ traccia.titolo }} - {{ traccia.autore }}
-                            </a>
-                        </li>
-                    {% endfor %}
-                {% endfor %}
-
-                {% for album_id, album in data.albumNonProprietari.items %}
-                {% for traccia_id, traccia in album.tracce.items %}
+                {% for traccia in tracks %}
                     <li>
-                        X <a href="#" onclick="changeTrack('/media/{{ traccia.file_name }}', '{{ traccia.titolo }}', '{{ traccia.autore }}', '/media/Album/{{ album_id }}.jpg'); return false;">
-                            {{ traccia.titolo }} - {{ traccia.autore }}
+                        {% if traccia.play_count != 0 %}&nbsp;&nbsp;&nbsp;&nbsp;{% endif %}
+                        🎵 <a href="#" onclick="changeTrack('/media/{{ traccia.file_path }}', '{{ traccia.title }}', '{{ traccia.artist }}', '/media/Album/{{ album.id }}.jpg'); return false;">
+                            {{ traccia.title }} - {{ traccia.artist }}
                         </a>
                     </li>
-                {% endfor %}
-            {% endfor %}            
+                {% endfor %}         
             </ul>
         </section>
 
         <!-- Album dell'Artista -->
-        <section class="albums-section">
+        <!-- <section class="albums-section">
             <h2>Album dell'Artista</h2>
             {% if data.albumProprietari %}
                 <div class="album-grid">
                     {% for album_id, album in data.albumProprietari.items %}
                     <div class="album-card">
-                        <a class="ajax-link" href="{% url 'album-page' album_id %}">
-                            <img src="/media/album/{{album_id}}.jpg" alt="Album 1">
-                            <p>{{album.album_nome}}</p>
-                        </a>
+                        <img src="/media/album/{{album_id}}.jpg" alt="Album 1">
+                        <p>{{album.album_nome}}</p>
                     </div>
                     {% endfor %}
                 </div>
@@ -192,10 +166,10 @@
                 <p>Nessun album trovato.</p>
             {% endif %}
 
-        </section>
+        </section> -->
 
         <!-- Album in cui Compare -->
-        <section class="collaboration-section">
+        <!-- <section class="collaboration-section">
             <h2>Album in cui Compare</h2>
             {% if data.albumNonProprietari %}
                 <div class="album-grid">
@@ -209,7 +183,7 @@
             {% else %}
                 <p>Nessun album trovato.</p>
             {% endif %}
-        </section>
+        </section> -->
     </main>
 
     <!-- Footer -->

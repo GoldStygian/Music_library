@@ -168,6 +168,45 @@ def getAlbums():
     except Exception as error:
         raise error
     
+def getTrackFromAlbum(id_album):
+
+    try:
+        query = """
+            SELECT * 
+            FROM traccia
+            WHERE album_id = %s;
+            """
+        with connection.cursor() as cursor:
+            cursor.execute(query, (id_album, ))
+            return cursor.fetchall()
+
+    except Exception as error:
+        raise error 
+
+def getAlbum(id_album):
+
+    try:
+        query = """
+            SELECT * 
+            FROM album
+            WHERE id = %s;
+            """
+        with connection.cursor() as cursor:
+            cursor.execute(query, (id_album, ))
+            result = cursor.fetchone()
+
+            result = {
+            'id': result[0],
+            'nome': result[1],
+            'data': result[2]
+            }
+
+        return result
+
+    except Exception as error:
+        raise error
+    
+
 def getTracks():
 
     try:
