@@ -6,6 +6,7 @@
 /server/media
 /server/app.log
 /server/credentials.json
+/server/todo.md
 /other/
 /venv/
 
