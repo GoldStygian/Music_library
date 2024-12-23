@@ -189,7 +189,7 @@ def uploadSongOnDB(filePath, fileName, variant):
             # logger.debug("ID traccia: ", idTrack)
             print("id: ", idTrack)
             if idTrack == None:
-                
+                pass
             
             
             n_variant = 0
