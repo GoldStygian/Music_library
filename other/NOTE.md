@@ -1,18 +1,3 @@
-# rimasto a
-
-Dezer fornisce anche la descrizione dell'artista
-in artista salvo cosi com'è
-quando visualizzo visualizzo il campo [A1, A2 ... (artistaStoredInDB)]
-non carica in DB quando non trova l'immagine tramite API
-thumb img
-fare un ajax request al posto di una richiesta completa quando carico
-i file hanno le immagini dei loro album
-
-# to do
-
-- def manageArtist(artistsRow) è limitato a gestire max 2 artisti
-
-
 # admin djando
 
 user: admin

@@ -286,7 +286,6 @@ def upload(request):
                 context["message"] = "Non è stato possibile recuperare l'immagine dell'artista"
 
             except Exception:
-                traceback.print_exc()
                 # return JsonResponse({"message": "Errore durante il caricamento della canzone"})
                 context["message"] = "Errore durante il caricamento della canzone"
 

@@ -6,6 +6,8 @@
 /server/media
 /server/app.log
 /server/credentials.json
+/other/
+/venv/
 
 *__pycache__
 *.pyc

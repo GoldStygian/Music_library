@@ -188,6 +188,9 @@ def uploadSongOnDB(filePath, fileName, variant):
             idTrack = mutagenIstance.getIDtrack()
             # logger.debug("ID traccia: ", idTrack)
             print("id: ", idTrack)
+            if idTrack == None:
+                
+            
             
             n_variant = 0
             if isTrackRegistred(idTrack): 
@@ -205,7 +208,6 @@ def uploadSongOnDB(filePath, fileName, variant):
 
                 else:
                     n_variant = 0     
-
 
 
             idAlbum = mutagenIstance.getIDalbum()
@@ -301,15 +303,14 @@ def uploadSongOnDB(filePath, fileName, variant):
 
             return {"id_track": idTrack, "id_album": idAlbum, "id_artist": firtArtist}
 
-    except TrackJustRegistred:
-        logger.warning("Traccia gia registrata")
-        raise TrackJustRegistred
+    # except TrackJustRegistred:
+    #     logger.warning("Traccia gia registrata")
+    #     raise TrackJustRegistred
                 
     except Exception as error:
         logger.error(traceback.format_exc())
-        # rollback del DB (gestito da django)
+        traceback.print_exc()
         
-        # rollback file
         os.remove(os.path.join(settings.MEDIA_ROOT, filePath))
         
         raise error

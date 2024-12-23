@@ -10,10 +10,6 @@ aggiungere il rollback com "with transiction"
 funzione di ricerca
 implementare playlist
 monitor di sistema
-implementare control menu of song{
-    SI SOVRAPPONE AGLI ELEMENTI DELLA pagina
-    non si deve sovrapporre alla sidenav
-}
 implementare pagina canzone in riproduzione in dettaglio
 implementare una client cash per le immagini
 implementare la funzionalità di ridurre la qualità della musica per connessioni lente o a scelta
@@ -29,6 +25,8 @@ PROBELMA:
 - upload di canzone senza metadati
   Soluzione
   ACUSTIC ID
+
+-- come applico i metadati al file originale?
 
 - siccome gestisce solo richeste ajax, fare che la slugless sia un altra pagina html 
 
