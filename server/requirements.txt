@@ -3,8 +3,8 @@ psycopg2
 musicbrainzngs
 requests
 mutagen
+pyacoustid
 
 -- da definitre: 
 selenium //driver browser
-google-api-python-client //youtube
-pyacusticid
+google-api-python-client //youtube attuale

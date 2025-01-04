@@ -1,4 +1,9 @@
+{% load static %}
 <style>
+    :root{
+        --primary-color: #D32F2F;
+        --transition-speed: 0.3s;
+    }
 
     h1, h2, p {
         margin: 0; /* Rimuove margini di default */
@@ -64,11 +69,18 @@
 
     .song-list li {
         padding: 10px; /* Padding interno per ogni elemento */
-        transition: background-color 0.3s; /* Transizione per l'effetto hover */
     }
 
-    .song-list li:hover {
-        background-color: #e0e0e0; /* Colore di sfondo al passaggio del mouse */
+    .song-list a{
+        text-decoration: none;
+        color:white;
+        
+        border-radius: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .song-list a:hover {
+        box-shadow: 0 3px 6px rgba(79, 8, 8, 0.5);
     }
 
     /* Griglia Album */
@@ -80,7 +92,7 @@
     }
 
     .album-card {
-        background-color: rgb(87, 87, 87); /* Colore di sfondo bianco per le card */
+        background-color: rgb(66, 66, 66); /* Colore di sfondo bianco per le card */
         border: 0px solid; /* Bordo grigio chiaro */
         border-radius: 8px; /* Angoli arrotondati */
         text-align: center; /* Allinea il testo al centro */
@@ -88,8 +100,15 @@
         transition: transform 0.3s; /* Transizione per l'effetto hover */
     }
 
+    .album-card a{
+        text-decoration: none;
+        color: white;
+    }
+
     /* Immagini degli Album */
     .album-card img {
+        text-decoration: none;
+
         width: 100%; /* Larghezza al 100% del contenitore */
         height: auto; /* Mantiene l'aspetto proporzionale dell'immagine */
         object-fit: cover; /* Adatta l'immagine al contenitore senza distorsioni */
@@ -132,87 +151,114 @@
     }
 </style>
 
-    <!-- Header -->
-    <header class="artist-header">
-        <div class="artist-photo">
-            <img src="/media/{{dataArtist.name}}/cover.jpg" alt="Foto dell'Artista">
-        </div>
-        <div class="artist-info">
-            <h1 class="artist-name">{{  dataArtist.name }}</h1>
-            {% if dataArtist.descrizione %}
-            <p class="artist-bio" id="descrizione">{{ dataArtist.descrizione }}</p>
-            <a id="readMoreBtn" style="display: none;">Read More</a>
-            {% endif %}
-        </div>
-    </header>
+<!-- Header -->
+<header class="artist-header">
+    <div class="artist-photo">
+        <img src="/media/{{dataArtist.name}}/cover.jpg" alt="Foto dell'Artista">
+    </div>
+    <div class="artist-info">
+        <h1 class="artist-name">{{  dataArtist.name }}</h1>
+        {% if dataArtist.descrizione %}
+        <p class="artist-bio" id="descrizione">{{ dataArtist.descrizione }}</p>
+        <a id="readMoreBtn" style="display: none;">Read More</a>
+        {% endif %}
+    </div>
+</header>
 
-    <!-- Contenuto Principale -->
-    <main class="main-content">
-        <!-- Canzoni -->
-        <section class="songs-section">
-            <h2>Canzoni</h2>
-            <ul class="song-list">
-                {% for album_id, album in data.albumProprietari.items %}
-                    {% for traccia_id, traccia in album.tracce.items %}
-                        <li>
-                            🎵 <a href="#" onclick="changeTrack('/media/{{ traccia.file_name }}', '{{ traccia.titolo }}', '{{ traccia.autore }}', '/media/Album/{{ album_id }}.jpg'); return false;">
-                                {{ traccia.titolo }} - {{ traccia.autore }}
-                            </a>
-                        </li>
-                    {% endfor %}
-                {% endfor %}
-
-                {% for album_id, album in data.albumNonProprietari.items %}
+<!-- Contenuto Principale -->
+<main class="main-content">
+    <!-- Canzoni -->
+    <section class="songs-section">
+        <h2>Canzoni</h2>
+        <ul class="song-list">
+            {% for album_id, album in data.albumProprietari.items %}
                 {% for traccia_id, traccia in album.tracce.items %}
                     <li>
-                        X <a href="#" onclick="changeTrack('/media/{{ traccia.file_name }}', '{{ traccia.titolo }}', '{{ traccia.autore }}', '/media/Album/{{ album_id }}.jpg'); return false;">
+                        {% if traccia.play_count != 0 %}&nbsp;&nbsp;&nbsp;&nbsp;{% endif %}
+                        🎵 <a href="#" onclick="changeTrack('/media/{{ traccia.file_name }}', '{{ traccia.titolo }}', '{{ traccia.autore }}', '/media/Album/{{ album_id }}.jpg'); return false;">
                             {{ traccia.titolo }} - {{ traccia.autore }}
                         </a>
                     </li>
                 {% endfor %}
-            {% endfor %}            
-            </ul>
-        </section>
+            {% endfor %}
 
-        <!-- Album dell'Artista -->
-        <section class="albums-section">
-            <h2>Album dell'Artista</h2>
-            {% if data.albumProprietari %}
-                <div class="album-grid">
-                    {% for album_id, album in data.albumProprietari.items %}
-                    <div class="album-card">
-                        <a class="ajax-link" href="{% url 'album-page' album_id %}">
-                            <img src="/media/album/{{album_id}}.jpg" alt="Album 1">
-                            <p>{{album.album_nome}}</p>
-                        </a>
-                    </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p>Nessun album trovato.</p>
-            {% endif %}
+            {% for album_id, album in data.albumNonProprietari.items %}
+            {% for traccia_id, traccia in album.tracce.items %}
+                <li>
+                    X <a href="#" onclick="changeTrack('/media/{{ traccia.file_name }}', '{{ traccia.titolo }}', '{{ traccia.autore }}', '/media/Album/{{ album_id }}.jpg'); return false;">
+                        {{ traccia.titolo }} - {{ traccia.autore }}
+                    </a>
+                </li>
+            {% endfor %}
+        {% endfor %}            
+        </ul>
+    </section>
 
-        </section>
-
-        <!-- Album in cui Compare -->
-        <section class="collaboration-section">
-            <h2>Album in cui Compare</h2>
-            {% if data.albumNonProprietari %}
-                <div class="album-grid">
-                    {% for album_id, album in data.albumNonProprietari.items %}
-                    <div class="album-card">
+    <!-- Album dell'Artista -->
+    <section class="albums-section">
+        <h2>Album dell'Artista</h2>
+        {% if data.albumProprietari %}
+            <div class="album-grid">
+                {% for album_id, album in data.albumProprietari.items %}
+                <div class="album-card">
+                    <a class="ajax-link" href="{% url 'album-page' album_id %}">
                         <img src="/media/album/{{album_id}}.jpg" alt="Album 1">
                         <p>{{album.album_nome}}</p>
-                    </div>
-                    {% endfor %}
+                    </a>
                 </div>
-            {% else %}
-                <p>Nessun album trovato.</p>
-            {% endif %}
-        </section>
-    </main>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Nessun album trovato.</p>
+        {% endif %}
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>© 2024 MusicPlatform. Tutti i diritti riservati.</p>
-    </footer>
+    </section>
+
+    <!-- Album in cui Compare -->
+    <section class="collaboration-section">
+        <h2>Album in cui Compare</h2>
+        {% if data.albumNonProprietari %}
+            <div class="album-grid">
+                {% for album_id, album in data.albumNonProprietari.items %}
+                <div class="album-card">
+                    <img src="/media/album/{{album_id}}.jpg" alt="Album 1">
+                    <p>{{album.album_nome}}</p>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Nessun album trovato.</p>
+        {% endif %}
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+    <p>© 2024 MusicPlatform. Tutti i diritti riservati.</p>
+</footer>
+
+<script>
+    const desc = document.getElementById("descrizione");
+    const readMoreBtn = document.getElementById("readMoreBtn");
+
+    if (desc) {
+        const maxLength = 250;
+        const fullText = desc.textContent.trim();
+
+        if (fullText.length > maxLength) {
+            const truncatedText = fullText.slice(0, maxLength) + "...";
+            desc.textContent = truncatedText;
+            readMoreBtn.style.display = "inline-block";
+
+            readMoreBtn.addEventListener("click", function () {
+                if (desc.textContent === truncatedText) {
+                    desc.textContent = fullText;
+                    readMoreBtn.textContent = "Read Less";
+                } else {
+                    desc.textContent = truncatedText;
+                    readMoreBtn.textContent = "Read More";
+                }
+            });
+        }
+    }
+</script>

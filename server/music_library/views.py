@@ -20,13 +20,13 @@ from .forms import  LoginUserForm
 from django.contrib.auth import login, logout
 
 #ChrmeDriver
-from selenium import webdriver
-from selenium.webdriver.edge.service import Service
-from selenium.webdriver.edge.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-import time
+# from selenium import webdriver
+# from selenium.webdriver.edge.service import Service
+# from selenium.webdriver.edge.options import Options
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.support.ui import WebDriverWait
+# from selenium.webdriver.support import expected_conditions as EC
+# import time
 
 import googleapiclient.discovery
 import pprint as pprint
@@ -124,6 +124,7 @@ def artist_page(request, artist_slug):
                 "artisti_partecipanti": entry[8],
                 "durata": entry[9],
                 "file_name": entry[10],
+                "play_count": entry[11]
             }
 
             # Verifica se l'album è proprietario o meno
@@ -202,7 +203,7 @@ def search(request):
         #URl of VIdeo: https://www.youtube.com/watch?v=OwnsPhzZQEM
         youtube_request = youtube.search().list(
             part='snippet',
-            q="lady gaga",
+            q="me contro te",
             maxResults=3,
             order="relevance",
             type="video",

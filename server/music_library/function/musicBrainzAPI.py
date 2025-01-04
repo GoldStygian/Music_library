@@ -1,19 +1,51 @@
 import requests
 import json
 
-# funzionalità
-# - artist by ID
-# - 
+# fare la calsse con il metodo di inizzializzazione
 
-# response = requests.get(
-#     # "https://musicbrainz.org/ws/2/artist/",
-#     # headers=headers,
-#     # params={
-#     #     "query": "artist:99efca32-eea1-45fb-92cb-8798976a9769",  # Ricerca per nome artista
-#     #     "fmt": "json"                 # Risposta in formato JSON
-#     # }
-#     "https://coverartarchive.org/release/69307f05-6182-4d73-bfad-0e11346b526f?fmt=json"
-# )
+import acoustid
+import musicbrainzngs
+
+# Inserisci qui la tua chiave API di MusicBrainz
+API_KEY = 'your_musicbrainz_api_key'
+
+# Impostazioni per MusicBrainz
+musicbrainzngs.set_useragent("AcousticIDApp", "1.0", API_KEY)
+
+def get_acoustic_id(file_path):
+    # Estrai l'ID acustico dal file audio
+    try:
+        # Genera l'ID acustico
+        duration, fingerprint = acoustid.fingerprint_file(file_path)
+        return fingerprint
+    except acoustid.AcoustidError as e:
+        print(f"Errore nella generazione dell'AcousticID: {e}")
+        return None
+
+def lookup_musicbrainz(acoustic_id):
+    # Cerca il brano su MusicBrainz utilizzando l'AcousticID
+    try:
+        result = musicbrainzngs.lookup_recording(acoustic_id)
+        if result:
+            recording = result['recording']
+            title = recording['title']
+            artist = recording['artist-credit'][0]['name']
+            album = recording.get('release-list', [{}])[0].get('title', 'Unknown')
+            print(f"Track found: {title} by {artist}, Album: {album}")
+    except musicbrainzngs.WebServiceError as e:
+        print(f"Errore nella ricerca su MusicBrainz: {e}")
+
+def identify_track(file_path):
+    acoustic_id = get_acoustic_id(file_path)
+    if acoustic_id:
+        lookup_musicbrainz(acoustic_id)
+
+# Esegui l'identificazione del file audio
+file_path = "path_to_your_audio_file.mp3"
+identify_track(file_path)
+
+
+# -----
 
 headers = {
     "User-Agent": "Music_library/1.0 (raf.rai.python@outlook.it)"
