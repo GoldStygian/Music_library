@@ -1,9 +1,12 @@
 from django.conf import settings
 from django.db import transaction
+from django.contrib.staticfiles.storage import staticfiles_storage
+from django.templatetags.static import static
 
 import subprocess
 import json
 import os
+import shutil
 from mutagen import File
 from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
@@ -102,9 +105,23 @@ class MutagenClass:
             return self.audio["artist"][0]
         else:
             return None
+        
+    def getJsonMetadata(self):
+        dict = {}
+        for key, value in self.audio.items():
+            dict[key]=value
 
-    def getAllMetadata(self):
-        return self.audio
+        return dict
+
+    def pritnMetadata(self):
+        if self.audio:
+            print("[MUTAGEN]")
+            for key, value in self.audio.items():
+                print(f"{key}: {value}")
+            return dict(self.audio)  # Restituisci i metadati come dizionario, se necessario
+        else:
+            print("Nessun metadato disponibile.")
+            return None
 
 
 def getJsonMetadata(filePath):
@@ -171,6 +188,8 @@ def uploadSongOnDB(filePath, fileName, variant):
 
     logger.info(f"Caricando {fileName}")
 
+    msg_return = []
+
     # reg !var -> exception
     # reg var -> incremento variant
     # !reg !var -> inserimento normale
@@ -180,7 +199,7 @@ def uploadSongOnDB(filePath, fileName, variant):
         with transaction.atomic():
             # lettura metadati
             mutagenIstance = MutagenClass(filePath)
-            logger.debug(f"Metadati traccia estratti offline: {mutagenIstance.getAllMetadata()}")
+            logger.debug(f"Metadati traccia estratti offline: {mutagenIstance.getJsonMetadata()}") # non viene stampato
             #print("[song metadata]\n", json.dumps(MutagenMetadata, indent=4, sort_keys=True))
 
             # artists = extractArtist(metadata["format"]["tags"]["artist"]) # metadata["format"]["tags"]["artist"] # puo contenere &, feturing, feat.
@@ -255,15 +274,39 @@ def uploadSongOnDB(filePath, fileName, variant):
 
             # registro l'album
             if not isAlbumRegistred(idAlbum):
-                logger.info(f"Album {OnlineAlbumMetadata["title"]}:{idAlbum} non registrato")
+                logger.info(f"Album {OnlineAlbumMetadata['title']}:{idAlbum} non registrato")
 
                 registerAlbum(idAlbum, OnlineAlbumMetadata["title"], OnlineAlbumMetadata["date"])
                 try:
                     download_album_img(idAlbum) #null con billie elish
-                except AlbumServerTimeout:
-                    raise AlbumServerTimeout
-                except NoAlbumImgFound:
-                    raise NoAlbumImgFound
+                # except AlbumServerTimeout:
+                #     raise AlbumServerTimeout
+                # except NoAlbumImgFound:
+                #     msg_return.append("Nessun immagine trovata, immagine default impostata")
+                except Exception as e:
+
+                    logger.error(f"{e}")
+
+                    source = os.path.join(settings.STATIC_ROOT, "icone", "default_cover.jpg")
+                    # source = staticfiles_storage.path('icone/default_cover.jpg')
+                    # source = static('icone/default_cover.jpg')
+                    print("debuggg:::", source)
+
+                    # Percorso del file di destinazione
+                    destination = os.path.join(settings.MEDIA_ROOT, "Album", f"{idAlbum}.jpg")
+
+                    try:
+                        # Copia del file
+                        shutil.copy(source, destination)
+                        print(f"File copiato con successo da {source} a {destination}")
+                        msg_return.append("Errore durante il download dell'immagine dell'album, immagine default impostata")
+                    except FileNotFoundError:
+                        logger.errorf(f"Il file sorgente a {source} non esiste!")
+                    except PermissionError:
+                        logger.error("Permesso negato! Controlla i permessi del file o della cartella.")
+                    except Exception as e2:
+                        logger.error(f"Errore durante la copia del file: {e2}")
+
             else:
                 logger.info(f"Album {OnlineAlbumMetadata["title"]}:{idAlbum} gia registrato")
 
@@ -308,10 +351,9 @@ def uploadSongOnDB(filePath, fileName, variant):
     #     raise TrackJustRegistred
                 
     except Exception as error:
+        
         logger.error(traceback.format_exc())
         traceback.print_exc()
-        
-        os.remove(os.path.join(settings.MEDIA_ROOT, filePath))
         
         raise error
 

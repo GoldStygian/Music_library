@@ -1,48 +1,71 @@
 import requests
 import json
 
-# fare la calsse con il metodo di inizzializzazione
 
 import acoustid
 import musicbrainzngs
+import pprint
+# fare la calsse con il metodo di inizzializzazione
 
-# Inserisci qui la tua chiave API di MusicBrainz
-API_KEY = 'your_musicbrainz_api_key'
+# ACOUSTID_API_KEY = 'z6uxCKyMbZ'
 
-# Impostazioni per MusicBrainz
-musicbrainzngs.set_useragent("AcousticIDApp", "1.0", API_KEY)
+# # Impostazioni per MusicBrainz
+# musicbrainzngs.set_useragent("Music Library", "1.0")
 
-def get_acoustic_id(file_path):
-    # Estrai l'ID acustico dal file audio
-    try:
-        # Genera l'ID acustico
-        duration, fingerprint = acoustid.fingerprint_file(file_path)
-        return fingerprint
-    except acoustid.AcoustidError as e:
-        print(f"Errore nella generazione dell'AcousticID: {e}")
-        return None
+# def get_acoustic_id(file_path):
+#     # Estrai l'ID acustico e cerca informazioni tramite AcoustID
+#     try:
+#         duration, fingerprint = acoustid.fingerprint_file(file_path)
+#         # Richiesta al servizio AcoustID
+#         results = acoustid.lookup(ACOUSTID_API_KEY, fingerprint, duration)
+#         for score, recording_id, title, artist in parse_acoustid_results(results):
+#             return recording_id  # Restituisce il recording ID da usare con MusicBrainz
+#     except acoustid.AcoustidError as e:
+#         print(f"Errore nella generazione dell'AcousticID: {e}")
+#         return None
 
-def lookup_musicbrainz(acoustic_id):
-    # Cerca il brano su MusicBrainz utilizzando l'AcousticID
-    try:
-        result = musicbrainzngs.lookup_recording(acoustic_id)
-        if result:
-            recording = result['recording']
-            title = recording['title']
-            artist = recording['artist-credit'][0]['name']
-            album = recording.get('release-list', [{}])[0].get('title', 'Unknown')
-            print(f"Track found: {title} by {artist}, Album: {album}")
-    except musicbrainzngs.WebServiceError as e:
-        print(f"Errore nella ricerca su MusicBrainz: {e}")
+# def parse_acoustid_results(results):
+#     # Processa i risultati restituiti da AcoustID
+#     try:
+#         for result in results["results"]:
+#             score = result["score"]
+#             recording = result["recordings"][0]
+#             recording_id = recording["id"]
+#             title = recording.get("title", "Unknown")
+#             # artist = recording["artists"][0].get("name", "Unknown")
+#             artist = "test"
+#             yield score, recording_id, title, artist
+#     except KeyError:
+#         print("Errore nel parsing dei risultati AcoustID")
 
-def identify_track(file_path):
-    acoustic_id = get_acoustic_id(file_path)
-    if acoustic_id:
-        lookup_musicbrainz(acoustic_id)
+# def lookup_musicbrainz(recording_id):
+#     # Cerca i dettagli del brano su MusicBrainz utilizzando il recording ID
+#     try:
+#         result = musicbrainzngs.get_recording_by_id(recording_id, includes=["artists", "releases"])
+#         # Nome del file in cui vuoi scrivere il risultato
+#         file_path = r"./result_output.txt"
 
-# Esegui l'identificazione del file audio
-file_path = "path_to_your_audio_file.mp3"
-identify_track(file_path)
+#         # Scrivi il risultato su un file
+#         with open(file_path, "w", encoding="utf-8") as file:
+#             pprint.pprint(result, stream=file)
+
+#         recording = result["recording"]
+#         title = recording["title"]
+#         artist = "test"
+#         # artist = recording["artist-credit"][0]["name"]
+#         album = recording.get("release-list", [{}])[0].get("title", "Unknown")
+#         print(f"Track found:\ntitle: {title}\nartist: {artist}\nAlbum: {album}")
+#     except musicbrainzngs.WebServiceError as e:
+#         print(f"Errore nella ricerca su MusicBrainz: {e}")
+
+# def identify_track(file_path):
+#     recording_id = get_acoustic_id(file_path)
+#     if recording_id:
+#         lookup_musicbrainz(recording_id)
+
+# # Esegui l'identificazione del file audio
+# file_path = r"C:\Users\prora\Desktop\Anuel AA - China.mp3"#r"C:\Users\prora\Desktop\Music_library\server\media\Don Omar\Don Omar - Virtual Diva.mp3"
+# identify_track(file_path)
 
 
 # -----

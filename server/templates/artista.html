@@ -175,7 +175,7 @@
                 {% for traccia_id, traccia in album.tracce.items %}
                     <li>
                         {% if traccia.play_count != 0 %}&nbsp;&nbsp;&nbsp;&nbsp;{% endif %}
-                        🎵 <a href="#" onclick="changeTrack('/media/{{ traccia.file_name }}', '{{ traccia.titolo }}', '{{ traccia.autore }}', '/media/Album/{{ album_id }}.jpg'); return false;">
+                        🎵 <a href="#" onclick="changeTrack('/media/{{ traccia.file_name|escapejs }}', '{{ traccia.titolo|escapejs }}', '{{ traccia.autore }}', '/media/Album/{{ album_id }}.jpg'); return false;">
                             {{ traccia.titolo }} - {{ traccia.autore }}
                         </a>
                     </li>

@@ -142,7 +142,7 @@
                 {% for traccia in tracks %}
                     <li>
                         {% if traccia.play_count != 0 %}&nbsp;&nbsp;&nbsp;&nbsp;{% endif %}
-                        🎵 <a href="#" onclick="changeTrack('/media/{{ traccia.file_path }}', '{{ traccia.title }}', '{{ traccia.artist }}', '/media/Album/{{ album.id }}.jpg'); return false;">
+                        🎵 <a href="#" onclick="changeTrack('/media/{{ traccia.file_path|escapejs }}', '{{ traccia.title|escapejs }}', '{{ traccia.artist }}', '/media/Album/{{ album.id }}.jpg'); return false;">
                             {{ traccia.title }} - {{ traccia.artist }}
                         </a>
                     </li>

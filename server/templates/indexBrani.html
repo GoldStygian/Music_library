@@ -134,7 +134,7 @@
 
 <div class="song-grid">
     {% for id, titolo, autore, artisti, albumID, durata, fileName in tracks %}
-        <a class="song-item" href="#" onclick="changeTrack('/media/{{fileName}}', '{{titolo}}', '{{autore}}', '/media/Album/{{albumID}}.jpg'); return false;">
+        <a class="song-item" href="#" onclick="changeTrack('/media/{{ fileName|escapejs }}', '{{titolo}}', '{{autore}}', '/media/Album/{{albumID}}.jpg'); return false;">
             <!-- Modifica: cambia il click per chiamare la funzione changeTrack -->
             <img class="song-item-image" src="/media/Album/{{albumID}}.jpg" alt="{{nome}}">
             <div class="song-name song-title" href="#">{{titolo}}</div> <!-- Nome della traccia sotto l'immagine -->
