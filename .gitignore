@@ -9,6 +9,8 @@
 /server/todo.md
 /other/
 /venv/
+/server/staticfiles
+/server/result_output.txt
 
 *__pycache__
 *.pyc
