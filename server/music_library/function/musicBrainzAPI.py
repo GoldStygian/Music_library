@@ -19,6 +19,8 @@ except json.JSONDecodeError:
 
 email = data["MUSIC_BRAINZ_API_EMAIL"]
 
+#testare se legge il giusto file
+
 headers = {
     f"User-Agent": "Music_library/1.0 ({email})"
 }

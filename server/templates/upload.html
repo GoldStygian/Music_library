@@ -5,14 +5,34 @@
     {% csrf_token %}
 
     <label>Inserisci una canzone</label>
-    <input type="file" name="songFile" accept=".mp3, .flac"><br>
-    Variante <input type="checkbox" name="variantCheckbox"><br>
+    <input type="file" id="songFile" name="songFile" accept=".mp3, .flac" onchange="toggleSelection('file')"><br>
+    Variante <input type="checkbox" name="variantCheckbox"><br><br>
+
+    <label>Seleziona una cartella da analizzare</label>
+    <input type="file" id="songFolder" name="songFolder" webkitdirectory directory onchange="toggleSelection('folder')"><br>
 
     <button type="submit">Carica</button>
 </form>
 
 {% if message %}
-<div id="form-response">{{message}}</div>
+    {% for mess in message %}
+        <ul id="form-response">{{ mess }}</ul>
+    {% endfor %}
 {% endif %}
+
+<script>
+    function toggleSelection(selectedType) {
+        let fileInput = document.getElementById("songFile");
+        let folderInput = document.getElementById("songFolder");
+
+        if (selectedType === 'file') {
+            folderInput.value = ""; // Reset cartella
+            folderInput.disabled = fileInput.files.length > 0;
+        } else if (selectedType === 'folder') {
+            fileInput.value = ""; // Reset file
+            fileInput.disabled = folderInput.files.length > 0;
+        }
+    }
+</script>
 
 {% endblock content %}

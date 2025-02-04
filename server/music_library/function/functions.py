@@ -301,7 +301,7 @@ def uploadSongOnDB(filePath, fileName, variant):
                         print(f"File copiato con successo da {source} a {destination}")
                         msg_return.append("Errore durante il download dell'immagine dell'album, immagine default impostata")
                     except FileNotFoundError:
-                        logger.errorf(f"Il file sorgente a {source} non esiste!")
+                        logger.error(f"Il file sorgente a {source} non esiste!")
                     except PermissionError:
                         logger.error("Permesso negato! Controlla i permessi del file o della cartella.")
                     except Exception as e2:
