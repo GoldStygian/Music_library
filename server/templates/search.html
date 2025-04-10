@@ -1,24 +1,74 @@
-<h1>YouTube Search Results</h1>
-
-<iframe width="1280" height="720" src="https://www.youtube.com/embed/kPa7bsKwL-c" title="Lady Gaga, Bruno Mars - Die With A Smile (Official Music Video)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-<iframe width="1280" height="720" src="https://www.youtube.com/embed/NBWKnBKyDqc?list=PLyZ0DGZE-bGJdXM8poOXt-WGFL8Drvqej" title="egzod &amp; maestro chives ft. neoni - royalty // slowed &amp; reverb" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
-<div id="video-list">
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risultati della Ricerca</title>
+    <style>
+        /* Stile per il pulsante di riproduzione */
+        .play-button {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .play-button:hover {
+            background-color: #cc0000;
+        }
+    </style>
+    <!-- Includi l'API di YouTube -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body>
+    <h1>Risultati della Ricerca</h1>
     {% for video in videos %}
-    <div class="video-item">
-        <h2>{{ video.title }}</h2>
-        <img src="{{ video.thumbnail }}" alt="Thumbnail" style="width: 300px; height: auto;">
-        <p>{{ video.description }}</p>
-        <p>Published at: {{ video.published_at }}</p>
-        <!-- Embedding the YouTube video -->
-        <iframe 
-            width="560" 
-            height="315" 
-            src="https://www.youtube.com/embed/{{ video.video_id }}" 
-            frameborder="0" 
-            allowfullscreen>
-        </iframe>
-        <hr>
-    </div>
+        <div>
+            <h2>{{ video.title }}</h2>
+            <!-- Iframe per il video di YouTube -->
+            <iframe
+                id="youtube-iframe-{{ forloop.counter }}"
+                width="560"
+                height="315"
+                src="https://www.youtube.com/embed/{{ video.video_id }}?enablejsapi=1&autoplay=0&mute=1"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+            <!-- Pulsante di riproduzione personalizzato -->
+            <button class="play-button" data-video-id="{{ forloop.counter }}">Riproduci</button>
+            <p>{{ video.description }}</p>
+            <p>Pubblicato il: {{ video.published_at }}</p>
+        </div>
     {% endfor %}
-</div>
+
+    <script>
+        // Funzione per gestire la riproduzione del video
+        function onYouTubeIframeAPIReady() {
+            // Crea un oggetto player per ogni iframe
+            {% for video in videos %}
+                new YT.Player('youtube-iframe-{{ forloop.counter }}', {
+                    events: {
+                        'onReady': onPlayerReady
+                    }
+                });
+            {% endfor %}
+        }
+
+        // Funzione chiamata quando il player è pronto
+        function onPlayerReady(event) {
+            // Aggiungi un listener per il pulsante di riproduzione
+            document.querySelectorAll('.play-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const videoId = this.getAttribute('data-video-id');
+                    const player = document.getElementById(`youtube-iframe-${videoId}`);
+                    if (player && player.playVideo) {
+                        player.playVideo();
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+django
+beautifulsoup4
+psycopg2
+musicbrainzngs
+requests
+mutagen
+pyacoustid
+
+-- da definitre: 
+selenium //driver browser
+google-api-python-client //youtube attuale

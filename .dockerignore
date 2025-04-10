@@ -1,0 +1,31 @@
+# Esclude le cartelle comuni inutili per l'immagine
+__pycache__/
+*.pyc
+*.pyo
+
+# Esclude l'ambiente virtuale locale
+venv/
+.env
+
+# Esclude file di configurazione personali o IDE
+*.log
+*.env
+*.DS_Store
+.idea/
+.vscode/
+
+# Esclude eventuali file static/media locali (se non servono in produzione)
+static/
+media/
+
+# File di build
+.dockerignore
+dockerfile
+docker-compose.yml
+
+# altro
+
+server/result_output.txt
+server/sonar-project.properties
+server/start.bat
+server/todo.md

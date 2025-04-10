@@ -29,10 +29,10 @@ except json.JSONDecodeError:
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 MEDIA_URL = '/media/'  # URL di accesso ai file media
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Percorso della directory 'media
+MEDIA_ROOT_ALBUM = os.path.join(MEDIA_ROOT, 'Album')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -120,6 +120,17 @@ DATABASES = {
         'PORT': '5432',       # di default, 5432 è la porta di PostgreSQL
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('DB_NAME', 'music_library'),
+#         'USER': os.getenv('DB_USER', 'postgres'),
+#         'PASSWORD': os.getenv('DB_PASSWORD', 'password'),
+#         'HOST': os.getenv('DB_HOST', 'db'),  # Il nome del servizio "db"
+#         'PORT': os.getenv('DB_PORT', '5432'),
+#     }
+# }
 
 
 # Password validation

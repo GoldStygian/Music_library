@@ -150,9 +150,10 @@ def download_album_img(albumID):
     
     data = mdAPI.getCoverAlbumByAlbumID(albumID) #null con billie elish
     if data:
-        print("donloading: ", data["images"][0]["image"])
+        print("donloading album img: ", data["images"][0]["image"])
         try:
-            download_image(data["images"][0]["image"], settings.MEDIA_ROOT+rf"/Album/{albumID}.jpg")
+            os.makedirs(settings.MEDIA_ROOT_ALBUM, exist_ok=True)    
+            download_image(data["images"][0]["image"], os.path.join(settings.MEDIA_ROOT_ALBUM, f"{albumID}.jpg"))
         except requests.exceptions.Timeout:
             raise AlbumServerTimeout
     else:
@@ -234,6 +235,8 @@ def uploadSongOnDB(filePath, fileName, variant):
             print("album: ", idAlbum)
 
             OnlineTrackMetadata = mdAPI.getMetadataByrecordingID(idTrack)
+            print("[debug] ", OnlineTrackMetadata)
+            print("[debug end] ")
             logger.debug(f"Metadati traccia estratti trmite API: {json.dumps(OnlineTrackMetadata, indent=4, sort_keys=True)}")
 
             firtArtist = None
@@ -247,10 +250,10 @@ def uploadSongOnDB(filePath, fileName, variant):
                     firtArtist = data["name"]
                     listArtist = data["name"]
                 else:
-                    listArtist += f";{data["name"]}"
+                    listArtist += f";{data['name']}"
 
                 if not isArtistRegistred(artistID):
-                    logger.info(f"Artista {data["name"]}:{artistID} non registrato")
+                    logger.info(f"Artista {data['name']}:{artistID} non registrato")
                     
                     dataArtist = mdAPI.getMetadataByArtistID(artistID)
                     
@@ -262,13 +265,12 @@ def uploadSongOnDB(filePath, fileName, variant):
                     os.mkdir(os.path.join(settings.MEDIA_ROOT, dataArtist["name"])) #se esiste
                     download_artist_img(artistID, dataArtist["name"])
                 else:
-                    logger.info(f"Artista {data["name"]}:{artistID} gia registrato")
+                    logger.info(f"Artista {data['name']}:{artistID} gia registrato")
             
             logger.debug("Metadati traccia estratti trmite API (SUCCESS)")
 
-
             # album
-            # - artista ID 
+            # - artista ID
             OnlineAlbumMetadata = mdAPI.getMetadataByAlbumID(idAlbum)
             logger.debug(f"Metadati album estratti trmite API: {json.dumps(OnlineAlbumMetadata, indent=4, sort_keys=True)}")
 
@@ -276,7 +278,7 @@ def uploadSongOnDB(filePath, fileName, variant):
             if not isAlbumRegistred(idAlbum):
                 logger.info(f"Album {OnlineAlbumMetadata['title']}:{idAlbum} non registrato")
 
-                registerAlbum(idAlbum, OnlineAlbumMetadata["title"], OnlineAlbumMetadata["date"])
+                registerAlbum(idAlbum, OnlineAlbumMetadata['title'], OnlineAlbumMetadata['date'])
                 try:
                     download_album_img(idAlbum) #null con billie elish
                 # except AlbumServerTimeout:
@@ -308,7 +310,7 @@ def uploadSongOnDB(filePath, fileName, variant):
                         logger.error(f"Errore durante la copia del file: {e2}")
 
             else:
-                logger.info(f"Album {OnlineAlbumMetadata["title"]}:{idAlbum} gia registrato")
+                logger.info(f"Album {OnlineAlbumMetadata['title']}:{idAlbum} gia registrato")
 
 
             # registro le associazioni proprietarie gli album

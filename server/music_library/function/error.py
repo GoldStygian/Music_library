@@ -12,3 +12,7 @@ class NoArtistImgFound(CustomError):
 
 class AlbumServerTimeout(CustomError):
     pass
+
+class MusciBrainzError:
+    class MusicBrainzLimitRequestExceeding:
+        pass

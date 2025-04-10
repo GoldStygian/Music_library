@@ -2,7 +2,7 @@ import logging
 
 logging.basicConfig(
     filename='app.log', 
-    level=logging.DEBUG, 
+    level=logging.ERROR, 
     format='%(asctime)s - %(levelname)s - %(message)s'
     )
 

@@ -1,16 +1,7 @@
 {% extends './base.html' %}
 {% block content %}
 
-<!-- Includi HTMX -->
-<script src="https://unpkg.com/htmx.org@1.9.2"></script>
-
-<!-- Form con attributi HTMX -->
-<form id="upload-form" 
-      hx-post="{% url 'upload' %}" 
-      hx-encoding="multipart/form-data"
-      hx-target="#upload-results" 
-      hx-swap="beforeend"
-      method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
     <label>Inserisci una canzone</label>
@@ -23,10 +14,11 @@
     <button type="submit">Carica</button>
 </form>
 
-<!-- Contenitore per i messaggi -->
-<ul id="upload-results">
-    <!-- I nuovi messaggi verranno aggiunti qui -->
-</ul>
+{% if message %}
+    {% for mess in message %}
+        <ul id="form-response">{{ mess }}</ul>
+    {% endfor %}
+{% endif %}
 
 <script>
     function toggleSelection(selectedType) {

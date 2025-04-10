@@ -4,5 +4,5 @@ cd ..\venv\Scripts
 call activate
 cd ..\..\server
 echo [+] avvio il server
-call python manage.py runserver 192.168.1.2:8001
+call python manage.py runserver 127.0.0.1:8000
 pause

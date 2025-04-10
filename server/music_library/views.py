@@ -204,11 +204,11 @@ def search(request):
         #URl of VIdeo: https://www.youtube.com/watch?v=OwnsPhzZQEM
         youtube_request = youtube.search().list(
             part='snippet',
-            q="me contro te",
+            q="In And Out Of Love",
             maxResults=3,
             order="relevance",
             type="video",
-            videoEmbeddable="true"
+            videoEmbeddable="true"  # Mantieni questa opzione per evitare video bloccati
         )
 
         # Parametri Importanti:
@@ -252,109 +252,126 @@ def search(request):
     else:
         return redirect('index-slugless')
 
+#HTMX
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+import os
+
 class UploadView(View):
     def __init__(self):
-        self.context={}
+        self.context = {}
         self.context["message"] = []
 
     def get(self, request):
         return render(request, 'upload.html')
 
     def post(self, request):
-
         file = request.FILES.get('songFile')
+
         if file:
-            self._handel_file(request, file)
+            return self.upload_song_htmx(request, file, return_string=False)
+        else:
 
-        folder = request.FILES.getlist('songFolder')
-        if folder:
-            self._handel_folder(request, folder)
+            folder = request.FILES.getlist('songFolder')
+            if folder:
+                messages_html = ""
+                for song in folder:
+                    messages_html += self.upload_song_htmx(request, song, return_string=True)
 
-        return render(request, 'upload.html', self.context)
- 
-    
-    def _handel_file(self, request, file):
+                return HttpResponse(messages_html)  # Restituisce tutti i messaggi in HTML
 
+        return render(request, 'upload.html')
+
+    def upload_song_htmx(self, request, file, return_string=False):  # Ora include 'self'
         fssv = FileSystemStorage(settings.MEDIA_ROOT)
-        fssv.save(file.name, file)  # Salva il file
-        print("[uploading] ", file.name)
+        fssv.save(file.name, file)
 
         try:
             variantCheckbox = request.POST.get("variantCheckbox")
             functions.uploadSongOnDB(os.path.join(settings.MEDIA_ROOT, file.name), file.name, variantCheckbox)
-            
-            # Aggiungi il messaggio con append
-            self.context["message"].append(f"[{file.name}] Canzone caricata con successo!")
-
+            message = f"[{file.name}] Canzone caricata con successo!"
         except error.TrackJustRegistred:
-            # Usa append per aggiungere il messaggio alla lista
-            self.context["message"].append(f"[{file.name}] Traccia già registrata")
+            message = f"[{file.name}] Traccia già registrata"
             os.remove(os.path.join(settings.MEDIA_ROOT, file.name))
-
         except error.AlbumServerTimeout:
-            # Usa append per aggiungere il messaggio alla lista
-            self.context["message"].append(f"[{file.name}] Non è stato possibile recuperare l'immagine dell'album (timeout risposta dai server)")
-        except error.NoAlbumImgFound:               
-            # Usa append per aggiunger il messaggio alla lista
-            self.context["message"].append(f"[{file.name}] Non è stato possibile recuperare l'immagine dell'album (possibile che i server non l'abbiano fornita)")
-    
+            message = f"[{file.name}] Timeout nel recupero dell'immagine dell'album"
+        except error.NoAlbumImgFound:
+            message = f"[{file.name}] Nessuna immagine dell'album trovata"
         except error.NoArtistImgFound:
-            # Usa append per aggiunger il messaggio alla lista
-            self.context["message"].append(f"[{file.name}] Non è stato possibile recuperare l'immagine dell'artista")
+            message = f"[{file.name}] Nessuna immagine dell'artista trovata"
         except Exception:
-            # Usa append per aggiunger il messaggio alla lista
-            self.context["message"].append(f"[{file.name}] Errore durante il caricamento della canzone")
+            message = f"[{file.name}] Errore durante il caricamento"
+
+        html_response = render_to_string("partials/upload_result.html", {"message": message})
+
+        if return_string:
+            return html_response  # Restituisce HTML come stringa
+
+        return HttpResponse(html_response)  # Se chiamato da `file`, risponde direttamente
 
 
-    def _handel_folder(self, request, folder):
 
-        for file in folder:
-            print("[file to upload] ", file)
-            self._handel_file(request, file)
-        
-#V1
-# def upload(request):
-    
-#     context = {}
+# class UploadView(View):
+#     def __init__(self):
+#         self.context={}
+#         self.context["message"] = []
 
-#     if request.method == 'POST':
-#         # carico il file
+#     def get(self, request):
+#         return render(request, 'upload.html')
+
+#     def post(self, request):
+
 #         file = request.FILES.get('songFile')
-#         if file: 
-#             print(file.name)
-#             fssv = FileSystemStorage(settings.MEDIA_ROOT)
-#             fssv.save(file.name, file)  # Salva il file
-#             print("[uploading] ", file.name)
+#         if file:
+#             self._handel_file(request, file)
+#         else:
+#             folder = request.FILES.getlist('songFolder')
+#             if folder:
+#                 self._handel_folder(request, folder)
 
-#             try:
-#                 variantCheckbox = request.POST.get("variantCheckbox")
-#                 functions.uploadSongOnDB(os.path.join(settings.MEDIA_ROOT, file.name), file.name, variantCheckbox)
-#                 # return JsonResponse({"message": Canzone caricata con successo!})
-#                 context["message"] = "Canzone caricata con successo!"
-
-#             except error.TrackJustRegistred:
-#                 context["message"] = "Traccia già registrata"
-#                 os.remove(os.path.join(settings.MEDIA_ROOT, file.name))
-            
-#             except error.AlbumServerTimeout:
-#                 context["message"] = "Non è stato possibile recuperare l'immagine dell'album (timeout risposta dai server)"
-
-#             except error.NoAlbumImgFound:                
-#                 # return JsonResponse({"message": "Non è stato possibile recuperare l'immagine dell'album"})
-#                 context["message"] = "Non è stato possibile recuperare l'immagine dell'album (possibile che i server non l'abbiano fornita)"
-            
-#             except error.NoArtistImgFound:
-#                 # return JsonResponse({"message": "Non è stato possibile recuperare l'immagine dell'artista"})
-#                 context["message"] = "Non è stato possibile recuperare l'immagine dell'artista"
-
-#             except Exception:
-#                 # return JsonResponse({"message": "Errore durante il caricamento della canzone"})
-#                 context["message"] = "Errore durante il caricamento della canzone"
-
-#     # if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-#     #     return render(request, 'upload.html')  
+#         return render(request, 'upload.html', self.context)
+ 
     
-#     return render(request, 'upload.html', context)
+#     def _handel_file(self, request, file):
+
+#         fssv = FileSystemStorage(settings.MEDIA_ROOT)
+#         fssv.save(file.name, file)  # Salva il file
+#         print("[uploading] ", file.name)
+
+#         try:
+#             variantCheckbox = request.POST.get("variantCheckbox")
+#             functions.uploadSongOnDB(os.path.join(settings.MEDIA_ROOT, file.name), file.name, variantCheckbox)
+            
+#             # Aggiungi il messaggio con append
+#             self.context["message"].append(f"[{file.name}] Canzone caricata con successo!")
+
+#         except error.TrackJustRegistred:
+#             # Usa append per aggiungere il messaggio alla lista
+#             self.context["message"].append(f"[{file.name}] Traccia già registrata")
+#             os.remove(os.path.join(settings.MEDIA_ROOT, file.name))
+
+#         except error.AlbumServerTimeout:
+#             # Usa append per aggiungere il messaggio alla lista
+#             self.context["message"].append(f"[{file.name}] Non è stato possibile recuperare l'immagine dell'album (timeout risposta dai server)")
+#         except error.NoAlbumImgFound:               
+#             # Usa append per aggiunger il messaggio alla lista
+#             self.context["message"].append(f"[{file.name}] Non è stato possibile recuperare l'immagine dell'album (possibile che i server non l'abbiano fornita)")
+    
+#         except error.NoArtistImgFound:
+#             # Usa append per aggiunger il messaggio alla lista
+#             self.context["message"].append(f"[{file.name}] Non è stato possibile recuperare l'immagine dell'artista")
+#         except Exception:
+#             # Usa append per aggiunger il messaggio alla lista
+#             self.context["message"].append(f"[{file.name}] Errore durante il caricamento della canzone")
+
+
+#     def _handel_folder(self, request, folder):
+
+#         for file in folder:
+#             print("[file to upload] ", file)
+#             self._handel_file(request, file)
+
 
 def logIn(request):
     

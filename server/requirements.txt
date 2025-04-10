@@ -1,10 +1,8 @@
+django
 beautifulsoup4
-psycopg2
+psycopg2-binary
 musicbrainzngs
 requests
 mutagen
 pyacoustid
-
--- da definitre: 
-selenium //driver browser
-google-api-python-client //youtube attuale
+google-api-python-client
