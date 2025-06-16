@@ -1,5 +1,6 @@
 import logging
 
+# dal più basso al più alto (DEBUG, INFO, WARNING, ERROR, CRITICAL)
 logging.basicConfig(
     filename='app.log', 
     level=logging.DEBUG, 

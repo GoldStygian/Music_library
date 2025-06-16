@@ -1,0 +1,11 @@
+$primary-color: #D32F2F;
+$text-color: white;
+$transition-speed: 0.3s;
+$background-color: rgb(33, 33, 33);
+
+main.container {
+    font-family: "Lato", sans-serif;
+    transition: background-color .5s;
+    background-color: $background-color;
+    color: #ffffff; /* Colore del testo */
+}

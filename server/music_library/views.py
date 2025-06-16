@@ -11,9 +11,11 @@ import os
 import traceback
 import logging
 
+from . import query
+
 
 #my lib
-from .function import functions, query, error
+from .function import functions, error
 
 #login
 from django.contrib.auth import login

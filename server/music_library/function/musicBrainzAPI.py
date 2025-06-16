@@ -1,10 +1,16 @@
 import requests
+<<<<<<< Updated upstream
 import json
 import pprint
 
 import acoustid
+=======
+import logging
+>>>>>>> Stashed changes
 import musicbrainzngs
+from django.conf import settings
 
+<<<<<<< Updated upstream
 data={}
 print("[ ] lettura credenziali")
 try:
@@ -20,6 +26,12 @@ except json.JSONDecodeError:
 email = data["MUSIC_BRAINZ_API_EMAIL"]
 
 #testare se legge il giusto file
+=======
+from .error import *
+
+logger = logging.getLogger(__name__)
+email = settings.MUSIC_BRAINZ_API_EMAIL
+>>>>>>> Stashed changes
 
 headers = {
     f"User-Agent": "Music_library/1.0 ({email})"
@@ -43,6 +55,34 @@ def getMetadataByAlbumID(albumID):
     except Exception as error:
         return error
     
+<<<<<<< Updated upstream
+=======
+def getMetadataByTitleAndArtist(song_title, artist_name):
+    try:
+
+        result = musicbrainzngs.search_recordings(query=song_title, artist=artist_name, limit=1)
+        recordings = result.get("recording-list", [])
+        if recordings:
+            recording = recordings[0]
+            title = recording.get("title")
+            # Le release vengono incluse in una chiave come "release-list"
+            releases = recording.get("release-list", [])
+            if releases:
+                # Potresti avere più release, ad esempio versioni in diversi paesi o il lato B di un singolo.
+                # Qui, prendiamo la prima come esempio.
+                album = releases[0]
+                album_id = album.get("id")
+                album_title = album.get("title")
+                print(f"Titolo: {title}\nAlbum: {album_title} (ID: {album_id})")
+            else:
+                print(f"Trovata registrazione '{title}', ma nessuna release associata.")
+        else:
+            print("Nessun risultato trovato")
+        return album_id
+    except Exception as error:
+        return error
+
+>>>>>>> Stashed changes
 def getCoverAlbumByAlbumID(albumID):
     try:
         return requests.get(f"https://coverartarchive.org/release/{albumID}?fmt=json", timeout=10).json()
@@ -50,3 +90,4 @@ def getCoverAlbumByAlbumID(albumID):
         raise requests.exceptions.Timeout
     except Exception as error:
         return error
+    

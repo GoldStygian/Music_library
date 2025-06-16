@@ -1,0 +1,34 @@
+<p>upload-page works!</p>
+
+
+<!-- <form id="upload-form" 
+      hx-post="{% url 'upload' %}" 
+      hx-encoding="multipart/form-data"
+      hx-target="#upload-results" 
+      hx-swap="beforeend"
+      method="post" enctype="multipart/form-data">
+
+    <label>Inserisci una canzone</label>
+    <input type="file" id="songFile" name="songFile" accept=".mp3, .flac" onchange="toggleSelection('file')"><br>
+    Variante <input type="checkbox" name="variantCheckbox"><br><br>
+
+    <label>Seleziona una cartella da analizzare</label>
+    <input type="file" id="songFolder" name="songFolder" webkitdirectory directory onchange="toggleSelection('folder')"><br>
+
+    <button type="submit">Carica</button>
+</form> -->
+<form (submit)="onSubmit($event)">
+  <label>Scegli uno o più file MP3</label>
+  <input type="file" (change)="onFilesSelected($event)" multiple accept=".mp3" /><br>
+  
+  <label>
+    Variante
+    <input type="checkbox" [(ngModel)]="variant" name="variant" />
+  </label><br><br>
+
+  <button type="submit">Carica</button>
+</form>
+
+<ul>
+  <li *ngFor="let msg of messages">{{ msg }}</li>
+</ul>

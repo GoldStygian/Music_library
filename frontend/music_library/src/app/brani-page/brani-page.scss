@@ -1,0 +1,121 @@
+@use '../app.scss' as *;
+
+.song-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 20px;
+    background-color: $background-color;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Song Item Card */
+.song-item {
+
+    text-align: center;
+    text-decoration: none;
+
+    background-color: rgba(255, 255, 255, 0);
+
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    // transition: transform $transition-speed, box-shadow $transition-speed;
+    position: relative;
+}
+
+/* Hover Effect for Song Items */
+.song-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Song Item Image */
+.song-item-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.song-item:hover {
+    transform: scale(1.1);
+}
+
+/* Song Details */
+.song-details {
+    padding: 15px;
+    text-align: center;
+}
+
+.song-title {
+    font-size: 1.2rem;
+    color: $text-color;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.song-artist {
+    color: $primary-color;
+    font-size: 1rem;
+}
+
+/* Responsive Breakpoints */
+@media screen and (max-width: 768px) {
+    .song-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        padding: 10px;
+    }
+
+    .song-item-image {
+        height: 200px;
+    }
+
+    .song-title {
+        font-size: 1rem;
+    }
+
+    .song-artist {
+        font-size: 0.9rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .song-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .song-item-image {
+        height: 250px;
+    }
+}
+
+/* Accessibility and Focus States */
+.song-item:focus-within {
+    outline: 3px solid $primary-color;
+    outline-offset: 4px;
+}
+
+/* Optional: Animated Play/Hover Indicator */
+.song-item::after {
+    content: '▶';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity $transition-speed;
+}
+
+.song-item:hover::after {
+    opacity: 1;
+}

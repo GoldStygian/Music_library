@@ -9,7 +9,7 @@ import os
 import shutil
 from mutagen import File
 from mutagen.easyid3 import EasyID3
-from mutagen.mp3 import MP3
+from mutagen.mp3 import MP3, HeaderNotFoundError
 from mutagen.flac import FLAC
 from mutagen.mp4 import MP4  # per file M4A
 import traceback
@@ -20,8 +20,9 @@ import logging
 from . import deezerAPI
 from . import lastFmAPI
 from . import musicBrainzAPI as mdAPI
-from .query import *
+from ..query import *
 from .error import *
+from .acusticid import *
 
 logger = logging.getLogger(__name__)
 
@@ -184,6 +185,7 @@ def extractArtist(artistsRow):
     return [found_artists, found_artists]
 
 
+
 def uploadSongOnDB(filePath, fileName, variant):
 
     logger.info(f"Caricando {fileName}")
@@ -195,22 +197,32 @@ def uploadSongOnDB(filePath, fileName, variant):
     # !reg !var -> inserimento normale
     # !reg var -> set variant to 1
 
+    idTrack = None
+    idAlbum = None
+
     try:
         with transaction.atomic():
             # lettura metadati
-            mutagenIstance = MutagenClass(filePath)
-            logger.debug(f"Metadati traccia estratti offline: {mutagenIstance.getJsonMetadata()}") # non viene stampato
-            #print("[song metadata]\n", json.dumps(MutagenMetadata, indent=4, sort_keys=True))
+            try:
+                mutagenIstance = MutagenClass(filePath)
+                idTrack = mutagenIstance.getIDtrack()
+                idAlbum = mutagenIstance.getIDalbum()
+                logger.debug(f"Metadati traccia estratti offline: {mutagenIstance.getJsonMetadata()}") # non viene stampato
+            except HeaderNotFoundError:
+                logger.warning("Non è stato possibile estrapolare le informazione dal file provo con Acustic ID")
+                # fingerprint = get_acoustic_id(filePath)
+                # print("AAAAAAAAA: ", lookup_musicbrainz(fingerprint))
+                result = get_song_data(filePath)
+                print("acusticID: ", result)
+                idTrack = result["recording_id"]
+                idAlbum = result["album_id"]
 
-            # artists = extractArtist(metadata["format"]["tags"]["artist"]) # metadata["format"]["tags"]["artist"] # puo contenere &, feturing, feat.
 
-            idTrack = mutagenIstance.getIDtrack()
-            # logger.debug("ID traccia: ", idTrack)
             print("id: ", idTrack)
             if idTrack == None:
                 pass
             
-            
+            # leggere il nome e vedere se contiene sloweed....
             n_variant = 0
             if isTrackRegistred(idTrack): 
 
@@ -228,12 +240,16 @@ def uploadSongOnDB(filePath, fileName, variant):
                 else:
                     n_variant = 0     
 
-
-            idAlbum = mutagenIstance.getIDalbum()
+            if idAlbum == None:
+                mdAPI.getMetadataByTitleAndArtist() ####################################àPARAM TITLE
             # logger.debug("ID album: ", idAlbum)
             print("album: ", idAlbum)
 
             OnlineTrackMetadata = mdAPI.getMetadataByrecordingID(idTrack)
+<<<<<<< Updated upstream
+=======
+            print("[OnlineTrackMetadata] ", OnlineTrackMetadata, "\n[OnlineTrackMetadata END]")
+>>>>>>> Stashed changes
             logger.debug(f"Metadati traccia estratti trmite API: {json.dumps(OnlineTrackMetadata, indent=4, sort_keys=True)}")
 
             firtArtist = None
@@ -259,7 +275,7 @@ def uploadSongOnDB(filePath, fileName, variant):
                     # registerArtist(artistID, dataArtist["area"]["name"], dataArtist["name"], description if description else "")
                     registerArtist(artistID, dataArtist["area"]["name"], dataArtist["name"], description)
 
-                    os.mkdir(os.path.join(settings.MEDIA_ROOT, dataArtist["name"])) #se esiste
+                    os.makedirs(os.path.join(settings.MEDIA_ROOT, dataArtist["name"]), exist_ok=True) #se esiste
                     download_artist_img(artistID, dataArtist["name"])
                 else:
                     logger.info(f"Artista {data["name"]}:{artistID} gia registrato")
@@ -356,131 +372,3 @@ def uploadSongOnDB(filePath, fileName, variant):
         traceback.print_exc()
         
         raise error
-
-
-"""
-OnlineAlbumMetadata
- {
-    "artist-credit": [
-        {
-            "artist": {
-                "disambiguation": "",
-                "id": "302bd7b9-d012-4360-897a-93b00c855680",
-                "name": "David Guetta",
-                "sort-name": "Guetta, David",
-                "type": "Person",
-                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
-            },
-            "joinphrase": " & ",
-            "name": "David Guetta"
-        },
-        {
-            "artist": {
-                "disambiguation": "Australian singer\u2010songwriter",
-                "id": "2f548675-008d-4332-876c-108b0c7ab9c5",
-                "name": "Sia",
-                "sort-name": "Sia",
-                "type": "Person",
-                "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
-            },
-            "joinphrase": "",
-            "name": "Sia"
-        }
-    ],
-    "asin": null,
-    "barcode": null,
-    "country": "GB",
-    "cover-art-archive": {
-        "artwork": true,
-        "back": false,
-        "count": 1,
-        "darkened": false,
-        "front": true
-    },
-    "date": "2018-03-22",
-    "disambiguation": "",
-    "id": "69307f05-6182-4d73-bfad-0e11346b526f",
-    "packaging": "None",
-    "packaging-id": "119eba76-b343-3e02-a292-f0f00644bb9b",
-    "quality": "normal",
-    "release-events": [
-        {
-            "area": {
-                "disambiguation": "",
-                "id": "8a754a16-0027-3a29-b6d7-2b40ea0481ed",
-                "iso-3166-1-codes": [
-                    "GB"
-                ],
-                "name": "United Kingdom",
-                "sort-name": "United Kingdom",
-                "type": null,
-                "type-id": null
-            },
-            "date": "2018-03-22"
-        }
-    ],
-    "status": "Official",
-    "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
-    "text-representation": {
-        "language": "eng",
-        "script": "Latn"
-    },
-    "title": "Flames"
-}"""
-
-"""
-{
-  "packaging": "Jewel Case",
-  "status": "Official",
-  "quality": "normal",
-  "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
-  "barcode": "9397604000569",
-  "disambiguation": "",
-  "country": "AU",
-  "cover-art-archive": {
-    "count": 0,
-    "darkened": false,
-    "back": false,
-    "front": false,
-    "artwork": false
-  },
-  "title": "7",
-  "asin": null,
-  "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
-  "artist-credit": [
-    {
-      "artist": {
-        "name": "David Guetta",
-        "sort-name": "Guetta, David",
-        "id": "302bd7b9-d012-4360-897a-93b00c855680",
-        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df",
-        "disambiguation": "",
-        "type": "Person"
-      },
-      "name": "David Guetta",
-      "joinphrase": ""
-    }
-  ],
-  "id": "f88f6bd5-3d75-4a51-843a-f020312fd3f0",
-  "date": "2018-09-14",
-  "release-events": [
-    {
-      "date": "2018-09-14",
-      "area": {
-        "iso-3166-1-codes": [
-          "AU"
-        ],
-        "type-id": null,
-        "id": "106e0bec-b638-3b37-b731-f53d507dc00e",
-        "sort-name": "Australia",
-        "name": "Australia",
-        "type": null,
-        "disambiguation": ""
-      }
-    }
-  ],
-  "text-representation": {
-    "script": "Latn",
-    "language": "eng"
-  }
-}"""

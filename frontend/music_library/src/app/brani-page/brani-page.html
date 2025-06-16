@@ -1,0 +1,19 @@
+<p>brani-page works!</p>
+<app-player #player></app-player>
+<div class="song-grid">
+    <!-- {% for id, titolo, autore, artisti, albumID, durata, fileName in tracks %} -->
+         <a class="song-item" *ngFor="let track of brani"> <!-- onclick="changeTrack('/media/{{ fileName|escapejs }}', '{{titolo}}', '{{autore}}', '/media/Album/{{albumID}}.jpg'); return false;" -->
+            <!-- Modifica: cambia il click per chiamare la funzione changeTrack -->
+            <img 
+                class="song-item-image" 
+                [src]="restService.media_url + '/Album/' + track.file_name + '.jpg'" 
+                alt="{{track.title}}"
+            />
+            <div class="song-name song-title" href="#">{{track.title}}</div> <!-- Nome della traccia sotto l'immagine -->
+            <p class="song-artist" (click)="playTrack(track)">{{track.author}}</p>
+        </a>
+
+    <p *ngIf="brani.length === 0" class="empty-message">
+      Nessun traccia trovata.
+    </p>
+</div>
