@@ -4,15 +4,10 @@ musicbrainzngs
 requests
 mutagen
 pyacoustid
-<<<<<<< Updated upstream
 
 -- da definitre: 
 selenium //driver browser
 google-api-python-client //youtube attuale
-=======
-google-api-python-client
 
 django-cors-headers
 djangorestframework 
-djangorestframework-simplejwt
->>>>>>> Stashed changes

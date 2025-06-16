@@ -1,16 +1,12 @@
 import requests
-<<<<<<< Updated upstream
 import json
 import pprint
 
 import acoustid
-=======
 import logging
->>>>>>> Stashed changes
 import musicbrainzngs
 from django.conf import settings
 
-<<<<<<< Updated upstream
 data={}
 print("[ ] lettura credenziali")
 try:
@@ -26,7 +22,6 @@ except json.JSONDecodeError:
 email = data["MUSIC_BRAINZ_API_EMAIL"]
 
 #testare se legge il giusto file
-=======
 from .error import *
 
 logger = logging.getLogger(__name__)

@@ -20,11 +20,6 @@ key_manager = keyManager("credentials.json")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-<<<<<<< Updated upstream
-
-=======
-# Media file
->>>>>>> Stashed changes
 MEDIA_URL = '/media/'  # URL di accesso ai file media
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Percorso della directory 'media

@@ -246,10 +246,8 @@ def uploadSongOnDB(filePath, fileName, variant):
             print("album: ", idAlbum)
 
             OnlineTrackMetadata = mdAPI.getMetadataByrecordingID(idTrack)
-<<<<<<< Updated upstream
-=======
             print("[OnlineTrackMetadata] ", OnlineTrackMetadata, "\n[OnlineTrackMetadata END]")
->>>>>>> Stashed changes
+
             logger.debug(f"Metadati traccia estratti trmite API: {json.dumps(OnlineTrackMetadata, indent=4, sort_keys=True)}")
 
             firtArtist = None
