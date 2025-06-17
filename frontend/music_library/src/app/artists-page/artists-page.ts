@@ -19,6 +19,10 @@ export class ArtistsPage {
   ngOnInit() {
     this.fetchArtists();  
   }
+
+  goToDetail(a: Artist) {
+    this.router.navigate(['/artisti', a.id], { state: { artist: a } });
+  }
   
   fetchArtists(){
     this.restService.getArtists().subscribe({

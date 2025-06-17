@@ -1,0 +1,15 @@
+<!-- Header -->
+<header class="artist-header">
+    <div class="artist-photo">
+        <img 
+         [src]="restService.media_url + '/' + artist?.name + '/cover.jpg'"
+         alt="Foto dell'Artista">
+    </div>
+    <div class="artist-info">
+        <h1 class="artist-name">{{ artist?.name }}</h1>
+        <!-- {% if dataArtist.descrizione %}
+        <p class="artist-bio" id="descrizione">{{ dataArtist.descrizione }}</p>
+        <a id="readMoreBtn" style="display: none;">Read More</a>
+        {% endif %} -->
+    </div>
+</header>

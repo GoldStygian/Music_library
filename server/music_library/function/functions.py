@@ -241,17 +241,22 @@ def uploadSongOnDB(filePath, fileName, variant):
                     n_variant = 0     
 
             if idAlbum == None:
-                mdAPI.getMetadataByTitleAndArtist() ####################################àPARAM TITLE
+                mdAPI.getMetadataByTitleAndArtist() ####################################àPARAM TITL
             # logger.debug("ID album: ", idAlbum)
             print("album: ", idAlbum)
 
-            OnlineTrackMetadata = mdAPI.getMetadataByrecordingID(idTrack)
-            print("[OnlineTrackMetadata] ", OnlineTrackMetadata, "\n[OnlineTrackMetadata END]")
+            try:
+                OnlineTrackMetadata = mdAPI.getMetadataByrecordingID(idTrack)
+            except Exception as e:
+                print(e)
+                raise
 
             logger.debug(f"Metadati traccia estratti trmite API: {json.dumps(OnlineTrackMetadata, indent=4, sort_keys=True)}")
 
             firtArtist = None
             listArtist = ""
+
+            print(OnlineTrackMetadata)
 
             for data in OnlineTrackMetadata["artist-credit"]:          
             

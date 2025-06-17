@@ -23,14 +23,18 @@ class IsAuthenticatedOrReadOnly(permissions.BasePermission):
         return request.user and request.user.is_authenticated
 
 
+
 class ArtistViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet per CRUD di Artist.
-    """
+
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
-    lookup_field = 'slug'
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_field = 'id'
+
+    def retrieve(self, request, *args, **kwargs):
+        uuid_value = kwargs.get(self.lookup_field)
+        print("[d] uuid:", uuid_value)
+        return super().retrieve(request, *args, **kwargs)
+
 
 
 class AlbumViewSet(viewsets.ModelViewSet):

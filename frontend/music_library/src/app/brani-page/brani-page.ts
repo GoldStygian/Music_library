@@ -10,24 +10,27 @@ import { PlayerService } from '../_services/player/player';
 @Component({
   selector: 'app-brani-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, PlayerComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './brani-page.html',
   styleUrl: './brani-page.scss'
 })
 export class BraniPage {
-  @ViewChild(PlayerComponent) player!: PlayerComponent;
   restService = inject(RestBackendService);
   router = inject(Router);
   brani: Track[] = [];
 
   ngOnInit() {
     this.fetchBrani();  
-    this.player.changeTrack(
-      this.restService.media_url + '/' + 'Lady Gaga' + '/' + 'Lady Gaga - Just Dance.mp3',
-      'Lady Gaga',
-      'Lady Gaga',
-      this.restService.media_url + '/' + 'Lady Gaga' + '/cover.jpg'
-    );
+  }
+
+  onTrackClick(track: Track) {
+    const url   = `${this.restService.media_url}/${track.file_name}`;
+    const cover = `${this.restService.media_url}/Album/${track.album_id}.jpg`;
+
+    // Emetti l'evento globale
+    window.dispatchEvent(new CustomEvent('play-track', {
+      detail: { url, title: track.title, artist: track.author, cover }
+    }));
   }
 
   fetchBrani(){
@@ -42,15 +45,15 @@ export class BraniPage {
     });
   }
 
-  playTrack(track: any) {
-    console.log("Track changed\n");
-    console.log(this.restService.media_url + '/' + track.author + '/' + track.title + '.mp3');
-    this.player.changeTrack(
-      this.restService.media_url + '/' + track.author + '/' + track.title + '.mp3',
-      track.title,
-      track.author,
-      this.restService.media_url + '/' + track.author + '/cover.jpg'
-    );
-  }
+  // playTrack(track: any) {
+  //   console.log("Track changed\n");
+  //   console.log(this.restService.media_url + '/' + track.author + '/' + track.title + '.mp3');
+  //   this.player.changeTrack(
+  //     this.restService.media_url + '/' + track.author + '/' + track.title + '.mp3',
+  //     track.title,
+  //     track.author,
+  //     this.restService.media_url + '/' + track.author + '/cover.jpg'
+  //   );
+  // }
 
 }

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { ArtistsPage } from './artists-page/artists-page';
+import { ArtistDetail } from './artist-detail/artist-detail';
 import { SearchPage } from './search-page/search-page';
 import { PlaylistPage } from './playlist-page/playlist-page';
 import { BraniPage } from './brani-page/brani-page';
@@ -16,6 +17,11 @@ export const routes: Routes = [
         path: 'artisti',
         component: ArtistsPage,
         title: 'Artisti'
+    },
+    {
+        path: 'artisti/:id',
+        component: ArtistDetail,
+        title: 'Artista'
     },
     {
         path: 'ricerca',

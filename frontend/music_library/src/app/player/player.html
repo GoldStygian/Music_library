@@ -1,23 +1,38 @@
-<p>player</p>
-<div class="song-control-menu" *ngIf="!isPaused">
+<!-- player.component.html -->
+<div class="song-control-menu">
   <div class="song-cover-container">
-    <img class="song-cover" [src]="trackCover" alt="Copertina" />
-    <div class="song-title">{{ trackTitle }}</div>
-  </div>
-  <div class="controls-container">
-    <div class="controls-top-row">
-      <button class="control-button" (click)="togglePlayPause()">
-        <img [src]="isPaused ? 'assets/icone/play.png' : 'assets/icone/pause.png'" />
-      </button>
-      <span>{{ currentTime }}</span>
-      <!-- Puoi aggiungere qui next/prev -->
+    <img alt="Canzone in riproduzione" class="song-cover" [src]="trackCover" />
+    <div class="song-title-wrapper">
+      <div
+        class="song-title"
+        [class.marquee]="shouldScroll"
+        #titleRef
+      >
+        {{ trackTitle }}
+      </div>
     </div>
   </div>
-  <!-- <input
-    type="range"
-    id="progress-bar"
-    [value]="progress"
-    (input)="onProgressChange($event.target.value)"
-  /> -->
-</div>
 
+  <div class="controls-container">
+    <div class="controls-top-row">
+      <button id="play-pause-btn" class="control-button" (click)="togglePlayPause()">
+        <img
+          id="play-pause-img"
+          [src]="isPaused ? '/ico/play.png' : '/ico/pause.png'"
+        />
+      </button>
+      <span id="time">{{ currentTime }}</span>
+      <button id="prev-btn" class="control-button" (click)="prevTrack()">Previous</button>
+      <button id="next-btn" class="control-button" (click)="nextTrack()">Next</button>
+    </div>
+  </div>
+
+  <input
+    id="progress-bar"
+    type="range"
+    [value]="progress"
+    max="100"
+    step="1"
+    (input)="onProgressChange($any($event.target).value)"
+  />
+</div>

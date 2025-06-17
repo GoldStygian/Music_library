@@ -25,6 +25,11 @@ export class RestBackendService {
     return this.http.get<Artist[]>(url, this.httpOptions);
   }
 
+  getArtist(uuid: string) {
+    const url = `${this.url}/artists/${uuid}`; 
+    return this.http.get<Artist>(url, this.httpOptions);
+  }
+
   getTracks(){
     const url = `${this.url}/tracks`; 
     return this.http.get<Track[]>(url, this.httpOptions);

@@ -1,20 +1,10 @@
-<p>artists-page works!</p>
-
 <!-- artists-page.html -->
 <div class="item-grid">
     <!-- Cicla su ciascun artista restituito dal backend -->
     <div class="item-container" *ngFor="let artist of artists">
-      <!-- 
-        Immagazzino nell’URL il “slug” se presente, altrimenti l’ID 
-        (modifica la rotta di destinazione a seconda di come hai configurato il routing 
-        per la pagina dettaglio artista, ad esempio: /artisti/:slug o /artisti/:id) 
-      -->
-      <a [routerLink]="['/artisti', artist.slug ?? artist.id]">
-        <!-- 
-          Per l’immagine, presuppongo che tu abbia una cartella media organizzata così:
-          media/<nome_artista>/cover.jpg 
-          Adatta il path se la struttura è diversa. 
-        -->
+
+      <!-- <a [routerLink]="['/artisti', artist.id]"> -->
+        <a (click)="goToDetail(artist)">
         <img 
           class="item-img" 
           [src]="restService.media_url + '/' + artist.name + '/cover.jpg'" 
