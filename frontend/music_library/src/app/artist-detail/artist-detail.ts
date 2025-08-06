@@ -33,4 +33,23 @@ export class ArtistDetail {
   }
 
 
+  isExpanded = false;
+  maxLength = 250;
+
+  get showReadMore(): boolean {
+    const desc = this.artist?.description;
+    return !!desc && desc.length > this.maxLength;
+  }
+
+  get descriptionText(): string {
+    if (!this.artist?.description) return '';
+    return this.isExpanded
+      ? this.artist.description
+      : this.artist.description.slice(0, this.maxLength) + (this.showReadMore ? '...' : '');
+  }
+
+  toggleDescription(): void {
+    this.isExpanded = !this.isExpanded;
+  }
+
 }

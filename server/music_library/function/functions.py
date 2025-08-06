@@ -71,7 +71,7 @@ class MutagenClass:
         if "musicbrainz_trackid" in self.audio:
             return self.audio["musicbrainz_trackid"][0]
         else:
-            return None
+            raise HeaderNotFoundError
         
     def getIDalbum(self):
 
@@ -159,33 +159,6 @@ def download_album_img(albumID):
     else:
         raise NoAlbumImgFound
 
-def extractArtist(artistsRow):
-
-    #estraggo gli estisti dalla stringa ROW
-    ignore_words = {"feat.", "feat", "featuring", "&"}
-
-    #found_words = artistsRow.split()
-
-    # Dividi le parole tra artisti e parole ignorate
-    #found_artists = [word for word in found_words if word.lower() not in ignore_words]
-    #found_ignored = [word for word in found_words if word.lower() in ignore_words]
-    
-    ignored_words = []  # Lista per memorizzare le parole ignorate
-    # Creiamo un pattern per separare gli artisti dalle parole ignorate
-    for word in ignore_words:
-        if word in artistsRow:  # Controlla se la parola ignorata è presente
-            ignored_words.extend([word] * artistsRow.count(word))  # Aggiungi alla lista in base al numero di occorrenze
-            artistsRow = artistsRow.replace(word, ",")  # Sostituisci le parole ignorate con una virgola
-    
-    # Ora possiamo dividere la stringa sulla base della virgola
-    found_artists = [artist.strip() for artist in artistsRow.split(',') if artist.strip()]
-    
-    print(f"[Artisti trovati]: {found_artists}, Parole ignorate: {ignored_words}")
-
-    return [found_artists, found_artists]
-
-
-
 def uploadSongOnDB(filePath, fileName, variant):
 
     logger.info(f"Caricando {fileName}")
@@ -220,7 +193,7 @@ def uploadSongOnDB(filePath, fileName, variant):
 
             print("id: ", idTrack)
             if idTrack == None:
-                pass
+                raise Exception("can't handel track")
             
             # leggere il nome e vedere se contiene sloweed....
             n_variant = 0
@@ -241,9 +214,13 @@ def uploadSongOnDB(filePath, fileName, variant):
                     n_variant = 0     
 
             if idAlbum == None:
-                mdAPI.getMetadataByTitleAndArtist() ####################################àPARAM TITL
+                idAlbum = mdAPI.getMetadataByTitleAndArtist(
+                    result["title"],
+                    result["artist"]
+                ) #To Implemte
             # logger.debug("ID album: ", idAlbum)
             print("album: ", idAlbum)
+            # handel if None
 
             try:
                 OnlineTrackMetadata = mdAPI.getMetadataByrecordingID(idTrack)

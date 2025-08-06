@@ -12,6 +12,10 @@
 /server/staticfiles
 /server/result_output.txt
 
+/backend/express/node_modules
+/backend/express/package-lock.json
+/backend/express/dist/
+
 *__pycache__
 *.pyc
 
